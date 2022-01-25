@@ -1,0 +1,4 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans %}Obtaining permission to open a class from a course on the IL campus{% endblocktrans %}
+{% endautoescape %}
