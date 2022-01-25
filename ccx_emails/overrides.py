@@ -4,7 +4,9 @@ from django.urls import reverse
 from edx_ace import ace
 from edx_ace.recipient import Recipient
 from lms.djangoapps.instructor.access import ROLES
-from lms.djangoapps.instructor.enrollment import EmailEnrollmentState, get_email_params as base_get_email_params
+from lms.djangoapps.instructor.enrollment import EmailEnrollmentState
+from lms.djangoapps.instructor.enrollment import enroll_email as base_enroll_email
+from lms.djangoapps.instructor.enrollment import get_email_params as base_get_email_params
 from lms.djangoapps.instructor.message_types import (
     AccountCreationAndEnrollment, AddBetaTester, AllowedEnroll,
     AllowedUnenroll, EnrolledUnenroll, EnrollEnrolled,
@@ -22,7 +24,7 @@ from common.djangoapps.student.models import (
     is_email_retired
 )
 
-from ccx_emails.message_types import EnrollEnrolledCCXCoach
+from ccx_emails.message_types import EnrollEnrolledCCXCoach, EnrollEnrolledCreateCCX
 
 
 def change_access(base_func, course, user, level, action, send_email=True):
@@ -43,8 +45,8 @@ def change_access(base_func, course, user, level, action, send_email=True):
     if action == 'allow':
         if level == 'ccx_coach':
             email_params = base_get_email_params(course, True)
-            email_params['level'] = level
-            enroll_email(
+            email_params['message_type'] = 'enrolled_enroll_ccx_coach'
+            base_enroll_email(
                 course_id=course.id,
                 student_email=user.email,
                 auto_enroll=True,
@@ -58,7 +60,7 @@ def change_access(base_func, course, user, level, action, send_email=True):
         raise ValueError(u"unrecognized action '{}'".format(action))
 
 
-def enroll_email(course_id, student_email, auto_enroll=False, email_students=False, email_params=None, language=None):
+def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_students=False, email_params=None, language=None):
     """
     Enroll a student by email.
 
@@ -93,9 +95,7 @@ def enroll_email(course_id, student_email, auto_enroll=False, email_students=Fal
 
         enrollment_obj = CourseEnrollment.enroll_by_email(student_email, course_id, course_mode)
         if email_students:
-            if email_params.get('level') == 'ccx_coach':
-                email_params['message_type'] = 'enrolled_enroll_ccx_coach'
-            else:
+            if not email_params.get('message_type'):
                 email_params['message_type'] = 'enrolled_enroll'
             email_params['email_address'] = student_email
             email_params['full_name'] = previous_state.full_name
@@ -116,7 +116,7 @@ def enroll_email(course_id, student_email, auto_enroll=False, email_students=Fal
 
 
 def get_email_params(base_func, course, auto_enroll, secure=True, course_key=None, display_name=None):
-    email_params = base_func(course, auto_enroll, secure=True, course_key=None, display_name=None)
+    email_params = base_func(course, auto_enroll, secure=secure, course_key=course_key, display_name=display_name)
 
     protocol = 'https' if secure else 'http'
     course_key = course_key or str(course.id)
@@ -131,6 +131,7 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
         site=stripped_site_name,
         path=reverse('ccx_coach_dashboard', kwargs={'course_id': course_key})
     )
+    email_params['root_course_name'] = Text(course.display_name_with_default)
 
     return email_params
 
@@ -194,6 +195,7 @@ def send_mail_to_student(student, param_dict, language=None):
         'enrolled_unenroll': EnrolledUnenroll,
         'remove_beta_tester': RemoveBetaTester,
         'enrolled_enroll_ccx_coach': EnrollEnrolledCCXCoach,
+        'enrolled_enroll_create_ccx': EnrollEnrolledCreateCCX,
     }
 
     message_class = ace_emails_dict[message_type]
