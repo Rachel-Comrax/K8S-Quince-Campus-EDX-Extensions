@@ -1,0 +1,11 @@
+{% load i18n %}{% autoescape off %}{% blocktrans %}Greeting {{ full_name }},{% endblocktrans %}
+
+{% blocktrans %}Per your request, you've received permission to open a new class for the course {{ course_name }}{% endblocktrans %}
+{% blocktrans %}Enter the following link to give the class a name and move forward in the management of the class:{% endblocktrans %}
+{{ ccx_coach_dashboard }}
+
+{% blocktrans %}For your convenience, we prepared for you instructional videos that will assist you throughout all learning stages, from student registration to tracking their progress and class management:{% endblocktrans %}
+http://bit.ly/2Ldk43f
+----
+{% blocktrans %}This email was automatically sent from {{ site_name }} to {{ full_name }}{% endblocktrans %}
+{% endautoescape %}

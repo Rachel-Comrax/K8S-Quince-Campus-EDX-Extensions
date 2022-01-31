@@ -1,0 +1,53 @@
+{% extends 'ace_common/edx_ace/common/base_body.html' %}
+
+{% load i18n %}
+{% load static %}
+{% block content %}
+<table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+        <td>
+            <h1>
+                {% filter force_escape %}
+                {% blocktrans %}
+                    Obtaining permission to open a class from a course on the IL campus
+                {% endblocktrans %}
+                {% endfilter %}
+            </h1>
+            <p>
+                {% blocktrans %}
+                    Greeting {{ full_name }},
+                {% endblocktrans %}
+            </p>
+            <p>
+                {% filter force_escape %}
+                {% blocktrans %}
+                    Per your request, you've received permission to open a new class for the course {{ course_name }}
+                {% endblocktrans %}
+                {% endfilter %}
+            </p>
+
+            {% filter force_escape %}
+                {% blocktrans asvar course_cta_text %}Enter the following link to give the class a name and move forward in the management of the class:{% endblocktrans %}
+            {% endfilter %}
+            {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_cta_text course_cta_url=ccx_coach_dashboard %}
+
+            <p style="color: rgba(0,0,0,.75);">
+                {% filter force_escape %}
+                {% blocktrans %}For your convenience, we prepared for you instructional videos that will assist you throughout all learning stages, from student registration to tracking their progress and class management:{% endblocktrans %}
+                {% endfilter %}
+            </p>
+            <p>
+                http://bit.ly/2Ldk43f
+                <br />
+            </p>
+
+            <p style="color: rgba(0,0,0,.75);">
+                {% filter force_escape %}
+                {% blocktrans %}This email was automatically sent from {{ site_name }} to {{ full_name }}{% endblocktrans %}
+                {% endfilter %}
+                <br />
+            </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}

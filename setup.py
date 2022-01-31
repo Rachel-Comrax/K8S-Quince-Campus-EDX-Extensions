@@ -60,7 +60,10 @@ with open("README.rst", "r") as fh:
     README = fh.read()
 
 VERSION = get_version('campus_edx_extensions', '__init__.py')
-APP_NAME = "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig"
+APP_NAMES = [
+    "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
+    "ccx_emails = ccx_emails.apps:CCXEmailsConfig",
+]
 
 
 setup(
@@ -87,9 +90,10 @@ setup(
     ],
     packages=[
         'campus_edx_extensions',
+        'ccx_emails',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     zip_safe=False,
-    entry_points={"lms.djangoapp": [APP_NAME]},
+    entry_points={"lms.djangoapp": APP_NAMES},
 )
