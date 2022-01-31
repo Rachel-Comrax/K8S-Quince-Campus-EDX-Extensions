@@ -20,3 +20,4 @@ def plugin_settings(settings):
     """
     settings.OVERRIDE_CHANGE_ACCESS = 'ccx_emails.overrides.change_access'
     settings.OVERRIDE_GET_EMAIL_PARAMS = 'ccx_emails.overrides.get_email_params'
+    settings.OVERRIDE_ENROLL_EMAIL = 'ccx_emails.overrides.enroll_email'

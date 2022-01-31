@@ -8,7 +8,7 @@
         <td>
             <h1>
                 {% filter force_escape %}
-                {% blocktrans %}Obtaining permission to open a class from a course on the IL campus{% endblocktrans %}
+                {% blocktrans %}A class has been opened for you from a course on the IL campus{% endblocktrans %}
                 {% endfilter %}
             </h1>
             <p>
@@ -16,16 +16,21 @@
             </p>
             <p>
                 {% filter force_escape %}
-                {% blocktrans %}Per your request, you've received permission to open a new class for the course {{ course_name }}{% endblocktrans %}
+                {% blocktrans %}Per your request, a new class was opened for you for the course {{ root_course_name }}{% endblocktrans %}
+                {% endfilter %}
+            </p>
+            <p>
+                {% filter force_escape %}
+                {% blocktrans %}Called {{ course_name }}{% endblocktrans %}
                 {% endfilter %}
             </p>
 
             <p>
                 {% filter force_escape %}
-                {% blocktrans %}Enter the following link to give the class a name and move forward in the management of the class:{% endblocktrans %}
+                {% blocktrans %}The class will appear in your personal area at the following link:{% endblocktrans %}
                 {% endfilter %}
-                {{ ccx_coach_dashboard }}
             </p>
+            {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_name course_cta_url=course_url %}
 
             <p style="color: rgba(0,0,0,.75);">
                 {% filter force_escape %}
