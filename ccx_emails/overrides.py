@@ -74,6 +74,9 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
 
     returns two EmailEnrollmentState's
         representing state before and after the action.
+
+    NOTE:
+        enroll_email use a custom send_mail_to_student func which placed here!
     """
     previous_state = EmailEnrollmentState(course_id, student_email)
     enrollment_obj = None
@@ -181,6 +184,7 @@ def send_mail_to_student(student, param_dict, language=None):
     param_dict['dashboard_url'] = message_context["dashboard_url"]
     param_dict['platform_name'] = message_context["platform_name"]
     param_dict['contact_email'] = message_context["contact_email"]
+    param_dict['support_contact_url'] = message_context["support_contact_url"]
 
     # see if there is an activation email template definition available as configuration,
     # if so, then render that
