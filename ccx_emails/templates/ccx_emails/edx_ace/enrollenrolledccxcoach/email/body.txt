@@ -6,6 +6,4 @@
 
 {% blocktrans %}For your convenience, we prepared for you instructional videos that will assist you throughout all learning stages, from student registration to tracking their progress and class management:{% endblocktrans %}
 http://bit.ly/2Ldk43f
-----
-{% blocktrans %}This email was automatically sent from {{ site_name }} to {{ full_name }}{% endblocktrans %}
 {% endautoescape %}
