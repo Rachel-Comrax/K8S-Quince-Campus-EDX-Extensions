@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}A class has been opened for you from a course on the IL campus{% endblocktrans %}
+{% blocktrans %}A class has been opened for you for a CampusIL course: {{ root_course_name }}{% endblocktrans %}
 {% endautoescape %}
