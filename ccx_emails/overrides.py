@@ -3,7 +3,7 @@ from django.conf import settings
 from django.urls import reverse
 from edx_ace import ace
 from edx_ace.recipient import Recipient
-from lms.djangoapps.instructor.access import ROLES
+from lms.djangoapps.instructor.access import allow_access, ROLES
 from lms.djangoapps.instructor.enrollment import EmailEnrollmentState
 from lms.djangoapps.instructor.enrollment import enroll_email as base_enroll_email
 from lms.djangoapps.instructor.enrollment import get_email_params as base_get_email_params
@@ -12,6 +12,7 @@ from lms.djangoapps.instructor.message_types import (
     AllowedUnenroll, EnrolledUnenroll, EnrollEnrolled,
     RemoveBetaTester
 )
+from lms.djangoapps.ccx.utils import ccx_course
 from openedx.core.djangoapps.ace_common.template_context import get_base_template_context
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.theming import helpers as theming_helpers
@@ -23,6 +24,7 @@ from common.djangoapps.student.models import (
     CourseEnrollmentAllowed,
     is_email_retired
 )
+from common.djangoapps.student.roles import CourseCcxCoachRole, CourseStaffRole
 
 from ccx_emails.message_types import EnrollEnrolledCCXCoach, EnrollEnrolledCreateCCX
 
@@ -211,3 +213,24 @@ def send_mail_to_student(student, param_dict, language=None):
     )
 
     ace.send(message)
+
+
+def assign_staff_role_to_ccx(base_func, ccx_locator, user, master_course_id):
+    """
+    Check if user has ccx_coach role on master course then assign them staff role on ccx only
+    if role is not already assigned. Because of this coach can open dashboard from master course
+    as well as ccx.
+    :param ccx_locator: CCX key
+    :param user: User to whom we want to assign role.
+    :param master_course_id: Master course key
+    """
+    coach_role_on_master_course = CourseCcxCoachRole(master_course_id)
+    # check if user has coach role on master course
+    if coach_role_on_master_course.has_user(user):
+        # Check if user has staff role on ccx.
+        role = CourseStaffRole(ccx_locator)
+        if not role.has_user(user):
+            # assign user the staff role on ccx
+            with ccx_course(ccx_locator) as course:
+                allow_access(course, user, "staff", send_email=False)
+                allow_access(course, user, "data_researcher", send_email=False)
