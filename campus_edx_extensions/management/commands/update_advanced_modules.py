@@ -16,6 +16,8 @@ class Command(BaseCommand):
         key_values = {"edxnotes": False, "edxnotes_visibility": False}
 
         for course in course_keys:
+            if "ccx-v1" in str(course):
+                continue
             with modulestore().bulk_operations(course):
                 print(
                     f'================Start updating course "{str(course)}"================'
