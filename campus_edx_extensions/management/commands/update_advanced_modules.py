@@ -20,7 +20,12 @@ class Command(BaseCommand):
                 print(
                     f'================Start updating course "{str(course)}"================'
                 )
-                course_module = modulestore().get_course(course, depth=0)
+                try:
+                    course_module = modulestore().get_course(course, depth=0)
+                except Exception as e:
+                    print(
+                        f'================Error: {e},\n for course "{str(course)}"================'
+                    )
 
                 for key, value in key_values.items():
                     if hasattr(course_module, key):
