@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 )
                 try:
                     course_module = modulestore().get_course(course, depth=0)
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-except
                     print(
                         f'================Error: {e},\n for course "{str(course)}"================'
                     )

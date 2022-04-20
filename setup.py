@@ -63,6 +63,7 @@ VERSION = get_version('campus_edx_extensions', '__init__.py')
 APP_NAMES = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
     "ccx_emails = ccx_emails.apps:CCXEmailsConfig",
+    "course_import = course_import.apps:CourseImportConfig",
 ]
 
 
