@@ -92,9 +92,9 @@ setup(
     packages=[
         'campus_edx_extensions',
         'ccx_emails',
+        'course_import',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     zip_safe=False,
-    entry_points={"lms.djangoapp": APP_NAMES},
-)
+    entry_points={"lms.djangoapp": APP_NAMES, "cms.djangoapp": APP_NAMES})

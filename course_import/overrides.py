@@ -22,13 +22,13 @@ log = logging.getLogger(__name__)
 CONTENT_RE = re.compile(r"(?P<start>\d{1,11})-(?P<stop>\d{1,11})/(?P<end>\d{1,11})")
 
 
-def write_chunk_override(request, courselike_key):
+def write_chunk_override(prev_fn, request, courselike_key):
     """
     Write the OLX file data chunk from the given request to the local filesystem.
     """
     from cms.djangoapps.contentstore.storage import course_import_export_storage
     from cms.djangoapps.contentstore.tasks import import_olx
-    from cms.djangoapps.contentstore.views import _save_request_status
+    from cms.djangoapps.contentstore.views.import_export import _save_request_status
     from cms.djangoapps.contentstore.utils import reverse_course_url
 
     # Upload .tar.gz to local filesystem for one-server installations not using S3 or Swift
