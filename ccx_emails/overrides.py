@@ -1,3 +1,5 @@
+import html
+
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.urls import reverse
@@ -7,6 +9,7 @@ from lms.djangoapps.instructor.access import allow_access, ROLES
 from lms.djangoapps.instructor.enrollment import EmailEnrollmentState
 from lms.djangoapps.instructor.enrollment import enroll_email as base_enroll_email
 from lms.djangoapps.instructor.enrollment import get_email_params as base_get_email_params
+from lms.djangoapps.instructor.enrollment import send_mail_to_student as base_send_mail_to_student
 from lms.djangoapps.instructor.message_types import (
     AccountCreationAndEnrollment, AddBetaTester, AllowedEnroll,
     AllowedUnenroll, EnrolledUnenroll, EnrollEnrolled,
@@ -104,7 +107,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
                 email_params['message_type'] = 'enrolled_enroll'
             email_params['email_address'] = student_email
             email_params['full_name'] = previous_state.full_name
-            send_mail_to_student(student_email, email_params, language=language)
+            base_send_mail_to_student(student_email, email_params, language=language)
 
     elif not is_email_retired(student_email):
         cea, _ = CourseEnrollmentAllowed.objects.get_or_create(course_id=course_id, email=student_email)
@@ -113,7 +116,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
         if email_students:
             email_params['message_type'] = 'allowed_enroll'
             email_params['email_address'] = student_email
-            send_mail_to_student(student_email, email_params, language=language)
+            base_send_mail_to_student(student_email, email_params, language=language)
 
     after_state = EmailEnrollmentState(course_id, student_email)
 
@@ -141,7 +144,7 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     return email_params
 
 
-def send_mail_to_student(student, param_dict, language=None):
+def send_mail_to_student(base_func, student, param_dict, language=None):
     """
     Construct the email using templates and then send it.
     `student` is the student's email address (a `str`),
@@ -169,9 +172,11 @@ def send_mail_to_student(student, param_dict, language=None):
 
     # Add some helpers and microconfig subsitutions
     if 'display_name' in param_dict:
-        param_dict['course_name'] = param_dict['display_name']
+        param_dict['course_name'] = html.unescape(param_dict['display_name'])
     elif 'course' in param_dict:
-        param_dict['course_name'] = Text(param_dict['course'].display_name_with_default)
+        param_dict['course_name'] = html.unescape(Text(param_dict['course'].display_name_with_default))
+
+    param_dict['course_name'] = str(param_dict['course_name']).replace("'","`")
 
     param_dict['site_name'] = configuration_helpers.get_value(
         'SITE_NAME',
