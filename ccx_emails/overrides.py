@@ -1,3 +1,5 @@
+import html
+
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.urls import reverse
@@ -141,7 +143,7 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     return email_params
 
 
-def send_mail_to_student(student, param_dict, language=None):
+def send_mail_to_student(base_func, student, param_dict, language=None):
     """
     Construct the email using templates and then send it.
     `student` is the student's email address (a `str`),
@@ -169,9 +171,11 @@ def send_mail_to_student(student, param_dict, language=None):
 
     # Add some helpers and microconfig subsitutions
     if 'display_name' in param_dict:
-        param_dict['course_name'] = param_dict['display_name']
+        param_dict['course_name'] = html.unescape(param_dict['display_name'])
     elif 'course' in param_dict:
-        param_dict['course_name'] = Text(param_dict['course'].display_name_with_default)
+        param_dict['course_name'] = html.unescape(Text(param_dict['course'].display_name_with_default))
+
+    param_dict['course_name'] = str(param_dict['course_name']).replace("'","`")
 
     param_dict['site_name'] = configuration_helpers.get_value(
         'SITE_NAME',
