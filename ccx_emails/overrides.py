@@ -9,6 +9,7 @@ from lms.djangoapps.instructor.access import allow_access, ROLES
 from lms.djangoapps.instructor.enrollment import EmailEnrollmentState
 from lms.djangoapps.instructor.enrollment import enroll_email as base_enroll_email
 from lms.djangoapps.instructor.enrollment import get_email_params as base_get_email_params
+from lms.djangoapps.instructor.enrollment import send_mail_to_student as base_send_mail_to_student
 from lms.djangoapps.instructor.message_types import (
     AccountCreationAndEnrollment, AddBetaTester, AllowedEnroll,
     AllowedUnenroll, EnrolledUnenroll, EnrollEnrolled,
@@ -106,7 +107,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
                 email_params['message_type'] = 'enrolled_enroll'
             email_params['email_address'] = student_email
             email_params['full_name'] = previous_state.full_name
-            send_mail_to_student(student_email, email_params, language=language)
+            base_send_mail_to_student(student_email, email_params, language=language)
 
     elif not is_email_retired(student_email):
         cea, _ = CourseEnrollmentAllowed.objects.get_or_create(course_id=course_id, email=student_email)
@@ -115,7 +116,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
         if email_students:
             email_params['message_type'] = 'allowed_enroll'
             email_params['email_address'] = student_email
-            send_mail_to_student(student_email, email_params, language=language)
+            base_send_mail_to_student(student_email, email_params, language=language)
 
     after_state = EmailEnrollmentState(course_id, student_email)
 
