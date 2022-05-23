@@ -107,7 +107,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
                 email_params['message_type'] = 'enrolled_enroll'
             email_params['email_address'] = student_email
             email_params['full_name'] = previous_state.full_name
-            base_send_mail_to_student(student_email, email_params, language=language)
+            send_mail_to_student(base_send_mail_to_student, student_email, email_params, language=language)
 
     elif not is_email_retired(student_email):
         cea, _ = CourseEnrollmentAllowed.objects.get_or_create(course_id=course_id, email=student_email)
@@ -116,7 +116,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
         if email_students:
             email_params['message_type'] = 'allowed_enroll'
             email_params['email_address'] = student_email
-            base_send_mail_to_student(student_email, email_params, language=language)
+            send_mail_to_student(base_send_mail_to_student, student_email, email_params, language=language)
 
     after_state = EmailEnrollmentState(course_id, student_email)
 
