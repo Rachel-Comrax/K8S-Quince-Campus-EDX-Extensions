@@ -126,6 +126,9 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     protocol = 'https' if secure else 'http'
     course_key = course_key or str(course.id)
     display_name = display_name or Text(course.display_name_with_default)
+    ccx_auth = 'finish_auth?course_id='
+    ccx_auto_reg_page = '/account/'
+    ccx_enrollment_action = '&enrollment_action=enroll&email_opt_in=false'
 
     stripped_site_name = configuration_helpers.get_value(
         'SITE_NAME',
@@ -138,6 +141,16 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     )
     email_params['root_course_name'] = Text(course.display_name_with_default)
 
+    ccx_auto_enroll_url = u'{proto}://{site}{page}{auth}{path}{action}'.format(
+        proto=protocol,
+        site=stripped_site_name,
+        page=ccx_auto_reg_page,
+        auth=ccx_auth,
+        path=course_key,
+        action=ccx_enrollment_action
+    )
+    email_params['ccx_auto_enroll_url'] = ccx_auto_enroll_url
+    
     return email_params
 
 
