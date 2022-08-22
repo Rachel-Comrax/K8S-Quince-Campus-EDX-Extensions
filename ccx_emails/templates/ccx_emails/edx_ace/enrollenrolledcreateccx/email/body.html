@@ -18,11 +18,11 @@
                 {% filter force_escape %}
                 {% blocktrans %}Per your request, a new class was opened for you for the course {{ root_course_name }}{% endblocktrans %}
                 {% endfilter %}
+                ({{ course_name }})
             </p>
+
             <p>
-                {% filter force_escape %}
                 {% blocktrans %}Called {{ course_name }}{% endblocktrans %}
-                {% endfilter %}
             </p>
 
             <p>
@@ -32,14 +32,9 @@
             </p>
             {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_name course_cta_url=course_url %}
 
-            <p style="color: rgba(0,0,0,.75);">
-                {% filter force_escape %}
-                {% blocktrans %}For your convenience, we prepared for you instructional videos that will assist you throughout all learning stages, from student registration to tracking their progress and class management:{% endblocktrans %}
-                {% endfilter %}
-            </p>
             <p>
-                http://bit.ly/2Ldk43f
-                <br />
+                <p> להזמנת תלמידים להרשמה מהירה לכיתה ניתן לשלוח את הלינק הבא: </p>
+                {{ccx_auto_enroll_url}}
             </p>
         </td>
     </tr>
