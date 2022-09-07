@@ -131,7 +131,7 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     display_name = display_name or Text(course.display_name_with_default)
     ccx_auth = 'finish_auth?course_id='
     ccx_auto_reg_page = '/account/'
-    ccx_enrollment_action = '&enrollment_action=enroll&email_opt_in=false'
+    ccx_enrollment_action = '&enrollment_action=enroll&email_opt_in=false&tpa_hint=saml-moe-edu-idm'
 
     stripped_site_name = configuration_helpers.get_value(
         'SITE_NAME',
