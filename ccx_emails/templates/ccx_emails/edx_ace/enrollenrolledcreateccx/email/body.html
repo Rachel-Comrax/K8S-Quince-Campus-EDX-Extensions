@@ -20,21 +20,17 @@
                 {% endfilter %}
                 ({{ course_name }})
             </p>
-
             <p>
                 {% blocktrans %}Called {{ course_name }}{% endblocktrans %}
             </p>
-
             <p>
                 {% filter force_escape %}
                 {% blocktrans %}The class will appear in your personal area at the following link:{% endblocktrans %}
                 {% endfilter %}
             </p>
             {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_name course_cta_url=course_url %}
-               
             <p>
-                <p> להזמנת תלמידים להרשמה מהירה לכיתה ניתן לשלוח את הלינק הבא: </p>
-                {{ccx_auto_enroll_url}}
+                {% blocktrans %}Send the following link to your students to invite them to your course: {{ccx_auto_enroll_url}}{% endblocktrans %}
             </p>
         </td>
     </tr>
