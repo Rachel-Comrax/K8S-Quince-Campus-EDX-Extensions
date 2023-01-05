@@ -64,6 +64,8 @@ APP_NAMES = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
     "ccx_emails = ccx_emails.apps:CCXEmailsConfig",
     "course_import = course_import.apps:CourseImportConfig",
+    "workers_queue = workers_queue.apps:WorkersQueueConfig",
+    "user_account = user_account.apps:UserAccountConfig",
 ]
 
 
@@ -93,6 +95,7 @@ setup(
         'campus_edx_extensions',
         'ccx_emails',
         'course_import',
+        'workers_queue',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
