@@ -59,6 +59,8 @@ def get_version(*file_paths):
 with open("README.rst", "r") as fh:
     README = fh.read()
 
+# VERSION = get_version('extended_translations', '__init__.py')
+# os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 VERSION = get_version('campus_edx_extensions', '__init__.py')
 APP_NAMES = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
@@ -66,7 +68,8 @@ APP_NAMES = [
     "course_import = course_import.apps:CourseImportConfig",
     "workers_queue = workers_queue.apps:WorkersQueueConfig",
     "user_account = user_account.apps:UserAccountConfig",
-    "periodic_task = periodic_task.apps:PeriodicTaskConfig"
+    "periodic_task = periodic_task.apps:PeriodicTaskConfig",
+    "password_expiration = password_expiration.apps:PasswordExpirationConfig",
 ]
 
 
@@ -97,6 +100,7 @@ setup(
         'ccx_emails',
         'course_import',
         'workers_queue',
+        'password_expiration',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
