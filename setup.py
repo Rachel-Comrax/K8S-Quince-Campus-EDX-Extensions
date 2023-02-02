@@ -73,6 +73,7 @@ APP_NAMES = [
 ]
 
 
+
 setup(
     name='campus_edx_extensions',
     version=VERSION,
