@@ -70,7 +70,7 @@ APP_NAMES = [
     "password_expiration = password_expiration.apps:PasswordExpirationConfig",
     "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig"
 ]
-
+ 
 
 setup(
     name='campus_edx_extensions',
