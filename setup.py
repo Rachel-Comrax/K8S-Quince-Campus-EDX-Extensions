@@ -66,7 +66,9 @@ APP_NAMES = [
     "course_import = course_import.apps:CourseImportConfig",
     "workers_queue = workers_queue.apps:WorkersQueueConfig",
     "user_account = user_account.apps:UserAccountConfig",
-    "periodic_task = periodic_task.apps:PeriodicTaskConfig"
+    "periodic_task = periodic_task.apps:PeriodicTaskConfig",
+    "password_expiration = password_expiration.apps:PasswordExpirationConfig",
+    "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig"
 ]
 
 
@@ -97,6 +99,8 @@ setup(
         'ccx_emails',
         'course_import',
         'workers_queue',
+        'password_expiration',
+        'video_transcripts',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
