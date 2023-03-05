@@ -100,7 +100,7 @@ def studio_transcript(prev_fn, self, request, dispatch):
                         )
             elif request.method == 'DELETE':
                 # // delete request.method == 'DELETE' function - the user won't be able to delete the transcript anymore
-                log.info(f"Data of request delete method - {request}")
+                log.warning(f"Someone tried to delete video-transcripts from his course, data of request (request.method == 'DELETE') - {request}")
                 return Response(status=200)
                 # request_data = request.json
 
