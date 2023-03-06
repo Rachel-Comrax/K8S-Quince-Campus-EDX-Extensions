@@ -58,7 +58,7 @@ def get_version(*file_paths):
 
 with open("README.rst", "r") as fh:
     README = fh.read()
-
+  
 VERSION = get_version('campus_edx_extensions', '__init__.py')
 APP_NAMES = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
@@ -100,7 +100,10 @@ setup(
         'course_import',
         'workers_queue',
         'password_expiration',
+<<<<<<< HEAD
         'video_transcripts',
+=======
+>>>>>>> main
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
