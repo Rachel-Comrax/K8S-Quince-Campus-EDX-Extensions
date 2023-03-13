@@ -9,12 +9,17 @@ changelog:
   categories:
     - title: Fixes 🛠
       labels:
-        - Semver-Major
-        - bug
+        - fix
     - title: Exciting New Features 🎉
       labels:
-        - Semver-Minor
-        - enhancement
+        - feat
+    - title: Chores 👨‍💻
+      labels:
+        - chore
+    - title: Styles and refactors 🌈
+      labels:
+        - refactor
+        - style
     - title: Other Changes
       labels:
         - "*"
