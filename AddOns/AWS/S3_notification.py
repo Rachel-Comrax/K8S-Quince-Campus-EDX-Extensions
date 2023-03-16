@@ -29,10 +29,10 @@ def get_json_file_from_s3(portal_name):
             store_data_in_cache(portal_name, json_data)
             return str(json_data)
         else:
-            log.error(f"The JSON conatain HTML/JS, please change it in order to see the popup notification you created")
+            log.error(f"From get_json_file_from_s3(portal_name): The JSON contain HTML/JS, please change it in order to see the popup notification you created")
             return None
     except:
-        log.error(f"The file name format is incorrect, please change it in order to see the popup notification you created")
+        log.error(f"From get_json_file_from_s3(portal_name): The file name format is incorrect, please change it in order to see the popup notification you created")
         return None
 
 
