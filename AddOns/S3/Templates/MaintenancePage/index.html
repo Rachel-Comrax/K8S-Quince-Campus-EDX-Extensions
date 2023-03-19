@@ -31,6 +31,14 @@
             display: flex;
             justify-content: center;
         }
+        .header-error{
+            font-weight: bold;
+            color: #ea5859;
+            font-size: 35px;
+            text-align: center;
+            margin: 15px 0 3px 0;
+            text-shadow: 2px 2px 10px #888888;
+        }
 
         .aligner .container {
             display: flex;
@@ -81,7 +89,6 @@
         
             .backgroud-img {
                 background-image: url(images/mainenance_page_mobile.jpg);
-           
             }
        
             .text-style {
@@ -107,8 +114,7 @@
         }
         
         /* For Tablate */
-        @media screen and (min-width: 540px) and (max-width: 1024px) {
-        
+        @media screen and (min-width: 540px) and (max-width: 1024px) {        
             .backgroud-img {
                 background-position: top right;
             }
@@ -119,19 +125,14 @@
 <body class="backgroud-img">
     <div class="aligner">
         <div class="container text-style">
-            <p>
-                לומדות ולומדים יקרים,
-           </p>
-           <p>עקב עבודות פיתוח ושדרוג, אתר קמפוסIL מושבת ויחזור עד השעה 01:00 (2.10). <br/>
-            ינשופי הלמידה שלנו שמעדיפים את השעות הללו - עמכם הסליחה (-: </p>
-           <p>עד שנחזור, מזמינים אתכם להאזין לפודקאסט שלנו.</p>
+            <h1 class="header-error"> סליחה תקלה</h1>
+            <p>לומדות ולומדים יקרים גם לנו זה קורה (לעתים נדירות !)<br/>
+            אנחנו עובדים ברגע זה על מנת שתוכלו להמשיך ולהנות ממאות הקורסים <br/>
+            בכל מקום וזמן, ובחינם!</p>
+            <p>עד שנחזור, מזמינים אתכם להאזין לפודקאסט שלנו.</p>
             <div class = "btn-aligner">
             <a href="https://open.spotify.com/show/1OHxm8zhTaKH9RfKT6Ao1D?si=E3lV8HaFQMupTP-_d75i-w&nd=1" target="_blank" class="ellipse-container-btn shadow-btn">״המאסטרים - קמפוסIL” - ראיונות עם המרצים הטובים ביותר בישראל</a>  
-            </div>
         </div>
-
-           
-
+     </div>
 </body>
-
 </html>
