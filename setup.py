@@ -66,6 +66,7 @@ APP_NAMES = [
     "course_import = course_import.apps:CourseImportConfig",
     "workers_queue = workers_queue.apps:WorkersQueueConfig",
     "user_account = user_account.apps:UserAccountConfig",
+    "periodic_task = periodic_task.apps:PeriodicTaskConfig",
     "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig"
 ]
  
