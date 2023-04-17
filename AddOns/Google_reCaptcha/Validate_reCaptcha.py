@@ -10,5 +10,5 @@ def validate_recaptcha(token):
     })
     response_dict = response.json()
     if not response_dict['success']:
-        raise AuthFailedError ("The CAPTCHA you entered is incorrect. Please try again.")
+        raise AuthFailedError (_("The answer you've entered is incorrect. Please try again"))
     return response.json()['success']
