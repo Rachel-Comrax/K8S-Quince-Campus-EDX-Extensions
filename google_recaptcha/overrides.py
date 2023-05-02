@@ -5,6 +5,7 @@ from common.djangoapps.student.helpers import get_next_url_for_login_page
 from openedx.core.djangoapps.user_authn.cookies import set_logged_in_cookies
 import logging
 from openedx.core.djangoapps.user_authn.views.login import login_user
+from django.utils.translation import ugettext as _
 log = logging.getLogger("edx.student")
 
 def login_post(prev_fn, self, request):
@@ -56,7 +57,7 @@ def register_post(prev_fn, self, request):
         validate_recaptcha(reCaptcha_token)
     except AuthFailedError:
         errors = {}
-        errors['recaptcha-validation-token'] = [{"user_message":"The CAPTCHA you entered is incorrect. Please try again."}]
+        errors['recaptcha-validation-token'] = [{"user_message":_("The answer you've entered is incorrect. Please try again")}]
         return self._create_response(request, errors, status_code=400)
 
     response = self._handle_duplicate_email_username(request, data)
