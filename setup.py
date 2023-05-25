@@ -67,7 +67,8 @@ APP_NAMES = [
     "workers_queue = workers_queue.apps:WorkersQueueConfig",
     "user_account = user_account.apps:UserAccountConfig",
     "periodic_task = periodic_task.apps:PeriodicTaskConfig",
-    "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig"
+    "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
+    "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig"
 ]
  
 
@@ -99,6 +100,7 @@ setup(
         'course_import',
         'workers_queue',
         'video_transcripts',
+        'incomplete_profile_message',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
