@@ -58,13 +58,19 @@ def get_version(*file_paths):
 
 with open("README.rst", "r") as fh:
     README = fh.read()
-
+  
 VERSION = get_version('campus_edx_extensions', '__init__.py')
 APP_NAMES = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
     "ccx_emails = ccx_emails.apps:CCXEmailsConfig",
+    "course_import = course_import.apps:CourseImportConfig",
+    "workers_queue = workers_queue.apps:WorkersQueueConfig",
+    "user_account = user_account.apps:UserAccountConfig",
+    "periodic_task = periodic_task.apps:PeriodicTaskConfig",
+    "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
+    "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha"
 ]
-
+ 
 
 setup(
     name='campus_edx_extensions',
@@ -91,9 +97,12 @@ setup(
     packages=[
         'campus_edx_extensions',
         'ccx_emails',
+        'course_import',
+        'workers_queue',
+        'video_transcripts',
+        'google_recaptcha'
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     zip_safe=False,
-    entry_points={"lms.djangoapp": APP_NAMES},
-)
+    entry_points={"lms.djangoapp": APP_NAMES, "cms.djangoapp": APP_NAMES})

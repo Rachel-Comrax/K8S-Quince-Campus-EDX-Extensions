@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusIL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/themes/landing-page/landing-page-campus.css" />
+    <style>
+        .backgroud-img {
+            background-image: url(images/maintenance_page_desktop.jpg);
+            background-repeat: no-repeat;
+            background-position: top left;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        .aligner{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 800px;
+        }
+
+        .btn-aligner{
+            display: flex;
+            justify-content: center;
+        }
+        .header-error{
+            font-weight: bold;
+            color: #ea5859;
+            font-size: 35px;
+            text-align: center;
+            margin: 15px 0 3px 0;
+            text-shadow: 2px 2px 10px #888888;
+        }
+
+        .aligner .container {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .text-bold {
+            font-weight: bold;
+        }
+        
+        .text-style {
+            font-family: Assistant, sans-serif;
+            color: rgb(255, 255, 255);
+            font-size: 20px;
+            text-align: right;
+            background-color: #00000040;
+            padding: 0 18px 22px;
+            border-radius: 10px;
+            
+        }
+        
+        p,
+        a {
+            direction: rtl;
+        }
+        
+        .ellipse-container-btn {
+            background-color: #90c553;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 0.8em;
+            padding: 1rem;
+            width: 460px;
+        }
+        
+        .shadow-btn {
+            box-shadow: 2px 2px 10px #888888;
+        }
+        
+        a:hover {
+            background-color: #749e44;
+        }
+        
+        /* For Mobile */
+        @media screen and (max-width: 540px) {
+        
+            .backgroud-img {
+                background-image: url(images/mainenance_page_mobile.jpg);
+            }
+       
+            .text-style {
+                margin: 0px;
+                font-size: 16px;
+            }
+        
+            .ellipse-container-btn {
+                width: auto;
+                padding-bottom: 10px;
+                padding-top: 10px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        }
+        
+        /* Extra small mobile */
+        @media screen and (max-width: 354px) {
+            .backgroud-img {
+                background-position: right;
+            }
+
+        }
+        
+        /* For Tablate */
+        @media screen and (min-width: 540px) and (max-width: 1024px) {        
+            .backgroud-img {
+                background-position: top right;
+            }
+        }
+    </style>
+</head>
+
+<body class="backgroud-img">
+    <div class="aligner">
+        <div class="container text-style">
+            <h1 class="header-error"> סליחה תקלה</h1>
+            <p>לומדות ולומדים יקרים גם לנו זה קורה (לעתים נדירות !)<br/>
+            אנחנו עובדים ברגע זה על מנת שתוכלו להמשיך ולהנות ממאות הקורסים <br/>
+            בכל מקום וזמן, ובחינם!</p>
+            <p>עד שנחזור, מזמינים אתכם להאזין לפודקאסט שלנו.</p>
+            <div class = "btn-aligner">
+            <a href="https://open.spotify.com/show/1OHxm8zhTaKH9RfKT6Ao1D?si=E3lV8HaFQMupTP-_d75i-w&nd=1" target="_blank" class="ellipse-container-btn shadow-btn">״המאסטרים - קמפוסIL” - ראיונות עם המרצים הטובים ביותר בישראל</a>  
+        </div>
+     </div>
+</body>
+</html>

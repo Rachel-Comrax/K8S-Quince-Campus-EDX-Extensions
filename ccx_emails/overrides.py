@@ -107,7 +107,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
                 email_params['message_type'] = 'enrolled_enroll'
             email_params['email_address'] = student_email
             email_params['full_name'] = previous_state.full_name
-            base_send_mail_to_student(student_email, email_params, language=language)
+            send_mail_to_student(base_send_mail_to_student, student_email, email_params, language=language)
 
     elif not is_email_retired(student_email):
         cea, _ = CourseEnrollmentAllowed.objects.get_or_create(course_id=course_id, email=student_email)
@@ -116,7 +116,7 @@ def enroll_email(base_func, course_id, student_email, auto_enroll=False, email_s
         if email_students:
             email_params['message_type'] = 'allowed_enroll'
             email_params['email_address'] = student_email
-            base_send_mail_to_student(student_email, email_params, language=language)
+            send_mail_to_student(base_send_mail_to_student, student_email, email_params, language=language)
 
     after_state = EmailEnrollmentState(course_id, student_email)
 
@@ -129,6 +129,9 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     protocol = 'https' if secure else 'http'
     course_key = course_key or str(course.id)
     display_name = display_name or Text(course.display_name_with_default)
+    ccx_auth = 'finish_auth?course_id='
+    ccx_auto_reg_page = '/account/'
+    ccx_enrollment_action = '&enrollment_action=enroll&email_opt_in=false'
 
     stripped_site_name = configuration_helpers.get_value(
         'SITE_NAME',
@@ -141,6 +144,16 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     )
     email_params['root_course_name'] = Text(course.display_name_with_default)
 
+    ccx_auto_enroll_url = u'{proto}://{site}{page}{auth}{path}{action}'.format(
+        proto=protocol,
+        site=stripped_site_name,
+        page=ccx_auto_reg_page,
+        auth=ccx_auth,
+        path=course_key,
+        action=ccx_enrollment_action
+    )
+    email_params['ccx_auto_enroll_url'] = ccx_auto_enroll_url
+    
     return email_params
 
 
