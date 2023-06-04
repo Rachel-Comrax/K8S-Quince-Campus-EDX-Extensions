@@ -23,8 +23,12 @@ def get_user_courses(request):
     _username = request.GET.get('user', request.user.username)
     _recomendationsRows = WpCourseRecommendations.get_recomdations_by_username(_username)
 
+    # check that configuration key exist in yml
+    if not hasattr(settings, "MIN_WEIGHT"):
+        return JsonResponse({"errorMessage": "The MIN_WEIGHT is not set in yml configuration."})
+    
     # check if the recommendations coll exists
-    if _recomendationsRows.exists() and settings.MIN_WEIGHT is not None:
+    if _recomendationsRows.exists():
         _recomendationRow = _recomendationsRows[0]
         # extract the recommendations collection 
         _recomendations = json.loads(_recomendationRow.recommendations)
