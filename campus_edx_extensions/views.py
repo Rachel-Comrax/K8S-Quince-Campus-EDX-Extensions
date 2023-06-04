@@ -24,7 +24,7 @@ def get_user_courses(request):
     _recomendationsRows = WpCourseRecommendations.get_recomdations_by_username(_username)
 
     # check if the recommendations coll exists
-    if _recomendationsRows.exists():
+    if _recomendationsRows.exists() and settings.MIN_WEIGHT is not None:
         _recomendationRow = _recomendationsRows[0]
         # extract the recommendations collection 
         _recomendations = json.loads(_recomendationRow.recommendations)
