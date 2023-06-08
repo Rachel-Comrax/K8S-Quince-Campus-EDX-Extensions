@@ -68,7 +68,7 @@ APP_NAMES = [
     "user_account = user_account.apps:UserAccountConfig",
     "periodic_task = periodic_task.apps:PeriodicTaskConfig",
     "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
-    "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig"
+    "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig",
     "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha"
 ]
  

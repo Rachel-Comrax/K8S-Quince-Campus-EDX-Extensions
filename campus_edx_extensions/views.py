@@ -9,7 +9,8 @@ from rest_framework.decorators import api_view
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from openedx.core.djangoapps.user_api.models import WpCourseRecommendations 
+
+from .models import WpCourseRecommendations 
 
 
 log = logging.getLogger(__name__)
