@@ -69,6 +69,7 @@ APP_NAMES = [
     "periodic_task = periodic_task.apps:PeriodicTaskConfig",
     "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
     "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig"
+    "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha"
 ]
  
 
@@ -101,6 +102,7 @@ setup(
         'workers_queue',
         'video_transcripts',
         'incomplete_profile_message',
+        'google_recaptcha',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
