@@ -15,10 +15,11 @@ Including another URLconf
 """
 # pylint: disable=unused-import
 from django.conf.urls import url
-from django.contrib import admin
+
 from . import views
 
+
 urlpatterns = [
-    url(
-        r'^course_recommendations/$', views.get_user_courses, name='user_reco')
+    url(r'^course_recommendations/$', views.get_user_courses, name='user_reco'),
+    url(r'^released_langs/', views.released_langs, name='released_langs'),
 ]

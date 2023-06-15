@@ -2,10 +2,10 @@ import json
 import logging
 
 from django.conf import settings
+from openedx.core.djangoapps.lang_pref.api import released_languages
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from lms.djangoapps.mobile_api.decorators import mobile_view
 from rest_framework.decorators import api_view
-
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -46,3 +46,16 @@ def get_user_courses(request):
         _output["recomendations"] = [item["course_id"] for item in _sorted_recomendations]
     
     return (JsonResponse(_output))
+
+
+@api_view(["GET"])
+def released_langs(request):
+    language_list = []
+    for code, name in released_languages():
+        language_list.append({
+            'code': code,
+            'name': name,
+            'released': True,
+        })
+
+    return JsonResponse(language_list, safe=False)
