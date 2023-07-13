@@ -1,14 +1,15 @@
-from AddOns.Google_reCaptcha.Validate_reCaptcha import validate_recaptcha
-from openedx.core.djangoapps.user_authn.exceptions import AuthFailedError
-from common.djangoapps.util.json_request import JsonResponse
-from common.djangoapps.student.helpers import get_next_url_for_login_page
-from openedx.core.djangoapps.user_authn.cookies import set_logged_in_cookies
 import logging
-from openedx.core.djangoapps.user_authn.views.login import login_user
+
+from common.djangoapps.util.json_request import JsonResponse
 from django.utils.translation import ugettext as _
+from openedx.core.djangoapps.user_authn.exceptions import AuthFailedError
+
+from AddOns.Google_reCaptcha.Validate_reCaptcha import validate_recaptcha
+
 log = logging.getLogger("edx.student")
 
-def login_post(prev_fn, self, request):
+
+def login_post(prev_fn, self, request, api_version):
     """Log in a user.
 
     See `login_user` for details.
@@ -21,7 +22,9 @@ def login_post(prev_fn, self, request):
         200 {'success': true}
 
     """
-    
+    reCaptcha_token = request.POST.get('recaptcha-validation-token', False)
+    if request.data['email'] == '' and request.data['password'] == '' and not reCaptcha_token:
+        return prev_fn(self, request, api_version)
     try:
         reCaptcha_token = str(request.POST['recaptcha-validation-token'])
         validate_recaptcha(reCaptcha_token)
@@ -30,7 +33,8 @@ def login_post(prev_fn, self, request):
         log.exception(response_content)
         response = JsonResponse(response_content, status=400)
         return response
-    return login_user(request)
+    return prev_fn(self, request, api_version)
+
 
 def register_post(prev_fn, self, request):
     """Create the user's account.
@@ -50,8 +54,6 @@ def register_post(prev_fn, self, request):
             address already exists
         HttpResponse: 403 operation not allowed
     """
-    data = request.POST.copy()
-    self._handle_terms_of_service(data)
     try:
         reCaptcha_token = str(request.POST['recaptcha-validation-token'])
         validate_recaptcha(reCaptcha_token)
@@ -60,15 +62,4 @@ def register_post(prev_fn, self, request):
         errors['recaptcha-validation-token'] = [{"user_message":_("The answer you've entered is incorrect. Please try again")}]
         return self._create_response(request, errors, status_code=400)
 
-    response = self._handle_duplicate_email_username(request, data)
-    if response:
-        return response
-
-    response, user = self._create_account(request, data)
-    if response:
-        return response
-
-    redirect_url = get_next_url_for_login_page(request, include_host=True)
-    response = self._create_response(request, {}, status_code=200, redirect_url=redirect_url)
-    set_logged_in_cookies(request, response, user)
-    return response
+    return prev_fn(self, request)
