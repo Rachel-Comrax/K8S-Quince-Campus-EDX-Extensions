@@ -1,16 +1,19 @@
 from django.contrib import admin
-from .models import CampusilReportableCoursesDigital
-#from openedx.core.djangoapps.content.course_overviews.models import CampusilReportableCoursesDigital
+#from .digital_reports.models import CampusilReportableCoursesDigital
+from openedx.core.djangoapps.content.course_overviews.models import CampusilReportableCoursesDigital
 
 class CampusilReportableCoursesDigitalAdmin(admin.ModelAdmin):
     
     def course_id(self,obj):
         return obj.courseoverview_ptr_id 
     
+    def is_reportable(self,obj):
+        return obj.isReportable
+    
     list_display = [ 
         'course_id',
         'display_name', 
-        'isReportable'
+        'is_reportable'
     ]
     
     fields = ('display_name', 'id', 'isReportable', 'org', 'display_org_with_default')
