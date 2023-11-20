@@ -1,30 +1,31 @@
-#from .models import CampusilReportableCoursesDigital
+from .models import CampusilReportableCoursesDigital
 import logging
-from openedx.core.djangoapps.content.course_overviews.models import CampusilReportableCoursesDigital
+from openedx.core.lib.celery import APP
 
 log = logging.getLogger(__name__)
 
-def get_digital_data_to_report():
+def get_digital_data_to_report(**data):
+   
     _queryset = CampusilReportableCoursesDigital.get_courses_to_report()
     _domain= 'http://localhost:18000/certificates/'
     _output = []  # Create an empty list to store the email values
-
+    time_slot = data["DIGITAL_TIME_DELTA"]
+    log.info(f'qwer10: DIGITAL_TIME_DELTA={time_slot}')
+    
+    
     for row in _queryset:
         
         course_id_str = str(row["_course_id"])
-        reportableCourses = None
-       # course_end_strftime= row['course_end_date'].strftime("%Y-%m-%d")
-        latter_grade =  1 if row["course_latter_grade"] == "Pass" else 0 
+        course_end_strftime= None if row['course_end_date'] is None else row['course_end_date'].strftime("%Y-%m-%d")
         # return 1 if student pass the course else 0 
-        total_grade = "not attempt" if row["course_latter_grade"] is None else row["course_latter_grade"] 
-        
+        latter_grade =  1 if row["course_latter_grade"] == "Pass" else 0 
+        # the final grade in range of 0-100:
+        total_grade = None if row["course_grade_total"] is None else row["course_grade_total"] * 100   
         # 'not attempt' means if the student does not start the course yet
-        certificate_status = "not attempt" if row['student_certificate_status'] is None else row['student_certificate_status']
-        concat_certificate_url = str(_domain) + str(row['student_certificate_verify_uuid'])
-        certificate_url = "not attempt" if row['student_certificate_verify_uuid'] is None else concat_certificate_url
-          
-        #log.info(f'student_last_name{row["student_last_name"]}')
-        
+        certificate_status = row['student_certificate_status']
+        #certificare url for download: 
+        verify_uuid = row['student_certificate_verify_uuid'] 
+        concat_certificate_url = None if verify_uuid is None else _domain + verify_uuid
         
         # set the User info
         student = {
@@ -35,7 +36,7 @@ def get_digital_data_to_report():
             "total_grade": total_grade,
             "pass": latter_grade,
             "certificate_status": certificate_status,
-            "certificate_url": certificate_url       
+            "certificate_url": concat_certificate_url      
         }
         
         # set the output JSON with joined multiple tables data
@@ -43,7 +44,7 @@ def get_digital_data_to_report():
             "course_id": course_id_str,
             "report_do_Digital": row["reportable_course"],
             "course_name": row["course_display_name"], 
-            #"couese_end": course_end_strftime,
+            "couese_end": course_end_strftime,
             "studant_meta": student
         }
         
@@ -51,3 +52,10 @@ def get_digital_data_to_report():
         
 
     return _output
+
+
+@APP.task
+def run_digital_data_to_report(**data):
+    log.info('Digital data report execution has begun ')
+    get_digital_data_to_report(**data)
+    log.info('Digital data report execution end')
