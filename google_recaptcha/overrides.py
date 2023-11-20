@@ -1,4 +1,6 @@
 from AddOns.Google_reCaptcha.Validate_reCaptcha import validate_recaptcha
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from django.conf import settings
 from openedx.core.djangoapps.user_authn.exceptions import AuthFailedError
 from common.djangoapps.util.json_request import JsonResponse
 from common.djangoapps.student.helpers import get_next_url_for_login_page
@@ -8,7 +10,7 @@ from openedx.core.djangoapps.user_authn.views.login import login_user
 from django.utils.translation import ugettext as _
 log = logging.getLogger("edx.student")
 
-def login_post(prev_fn, self, request):
+def login_post(prev_fn, self, request, *args, **kwargs):
     """Log in a user.
 
     See `login_user` for details.
@@ -21,18 +23,18 @@ def login_post(prev_fn, self, request):
         200 {'success': true}
 
     """
-    
-    try:
-        reCaptcha_token = str(request.POST['recaptcha-validation-token'])
-        validate_recaptcha(reCaptcha_token)
-    except AuthFailedError as error:
-        response_content = error.get_response()
-        log.exception(response_content)
-        response = JsonResponse(response_content, status=400)
-        return response
+    if configuration_helpers.get_value('IS_RECAPTCHA_ENABLED', settings.IS_RECAPTCHA_ENABLED):
+        try:
+            reCaptcha_token = str(request.POST['recaptcha-validation-token'])
+            validate_recaptcha(reCaptcha_token)
+        except AuthFailedError as error:
+            response_content = error.get_response()
+            log.exception(response_content)
+            response = JsonResponse(response_content, status=400)
+            return response
     return login_user(request)
 
-def register_post(prev_fn, self, request):
+def register_post(prev_fn, self, request, *args, **kwargs):
     """Create the user's account.
 
     You must send all required form fields with the request.
@@ -52,13 +54,15 @@ def register_post(prev_fn, self, request):
     """
     data = request.POST.copy()
     self._handle_terms_of_service(data)
-    try:
-        reCaptcha_token = str(request.POST['recaptcha-validation-token'])
-        validate_recaptcha(reCaptcha_token)
-    except AuthFailedError:
-        errors = {}
-        errors['recaptcha-validation-token'] = [{"user_message":_("The answer you've entered is incorrect. Please try again")}]
-        return self._create_response(request, errors, status_code=400)
+    
+    if configuration_helpers.get_value('IS_RECAPTCHA_ENABLED', settings.IS_RECAPTCHA_ENABLED):
+        try:
+            reCaptcha_token = str(request.POST['recaptcha-validation-token'])
+            validate_recaptcha(reCaptcha_token)
+        except AuthFailedError:
+            errors = {}
+            errors['recaptcha-validation-token'] = [{"user_message":_("The answer you've entered is incorrect. Please try again")}]
+            return self._create_response(request, errors, status_code=400)
 
     response = self._handle_duplicate_email_username(request, data)
     if response:
