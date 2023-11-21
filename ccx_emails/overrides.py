@@ -1,11 +1,17 @@
 import html
+import logging
 
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.urls import reverse
+from django.http import HttpResponseBadRequest
+from django.utils.html import strip_tags
+
 from edx_ace import ace
 from edx_ace.recipient import Recipient
-from lms.djangoapps.instructor.access import allow_access, ROLES
+from lms.djangoapps.courseware.courses import get_course_with_access
+from lms.djangoapps.instructor.views.tools import get_student_from_identifier
+from lms.djangoapps.instructor.access import allow_access, ROLES, revoke_access
 from lms.djangoapps.instructor.enrollment import EmailEnrollmentState
 from lms.djangoapps.instructor.enrollment import enroll_email as base_enroll_email
 from lms.djangoapps.instructor.enrollment import get_email_params as base_get_email_params
@@ -16,6 +22,8 @@ from lms.djangoapps.instructor.message_types import (
     RemoveBetaTester
 )
 from lms.djangoapps.ccx.utils import ccx_course
+from lms.djangoapps.ccx.models import CustomCourseForEdX
+from lms.djangoapps.ccx.api.v0.views import make_user_coach
 from openedx.core.djangoapps.ace_common.template_context import get_base_template_context
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.theming import helpers as theming_helpers
@@ -28,9 +36,14 @@ from common.djangoapps.student.models import (
     is_email_retired
 )
 from common.djangoapps.student.roles import CourseCcxCoachRole, CourseStaffRole
-
+from common.djangoapps.util.json_request import JsonResponse
 from ccx_emails.message_types import EnrollEnrolledCCXCoach, EnrollEnrolledCreateCCX
+from ccx_keys.locator import CCXLocator
+from opaque_keys.edx.keys import CourseKey
 
+
+
+log = logging.getLogger(__name__)
 
 def change_access(base_func, course, user, level, action, send_email=True):
     """
@@ -196,6 +209,12 @@ def send_mail_to_student(base_func, student, param_dict, language=None):
         param_dict['site_name']
     )
 
+    # Extract an LMS user ID for the student, if possible.
+    # ACE needs the user ID to be able to send email via Braze.
+    lms_user_id = 0
+    if 'user_id' in param_dict and param_dict['user_id'] is not None and param_dict['user_id'] > 0:
+        lms_user_id = param_dict['user_id']
+
     # Get required context
     site = theming_helpers.get_current_site()
     message_context = get_base_template_context(site)
@@ -226,7 +245,7 @@ def send_mail_to_student(base_func, student, param_dict, language=None):
     message_class = ace_emails_dict[message_type]
     user = User.objects.filter(email=student).first()
     message = message_class().personalize(
-        recipient=Recipient(lms_user_id=getattr(user, "id", None), email_address=student),
+        recipient=Recipient(lms_user_id=lms_user_id, email_address=student),
         language=language,
         user_context=param_dict,
     )
@@ -252,4 +271,95 @@ def assign_staff_role_to_ccx(base_func, ccx_locator, user, master_course_id):
             # assign user the staff role on ccx
             with ccx_course(ccx_locator) as course:
                 allow_access(course, user, "staff", send_email=False)
+                allow_access(course, user, "instructor", send_email=False)
                 allow_access(course, user, "data_researcher", send_email=False)
+                
+                
+def modify_access(base_func, request, course_id):
+    course_id = CourseKey.from_string(course_id)
+    course = get_course_with_access(
+        request.user, 'instructor', course_id, depth=None
+    )
+    try:
+        user = get_student_from_identifier(request.POST.get('unique_student_identifier'))
+    except User.DoesNotExist:
+        response_payload = {
+            'unique_student_identifier': request.POST.get('unique_student_identifier'),
+            'userDoesNotExist': True,
+        }
+        return JsonResponse(response_payload)
+
+    # Check that user is active, because add_users
+    # in common/djangoapps/student/roles.py fails
+    # silently when we try to add an inactive user.
+    if not user.is_active:
+        response_payload = {
+            'unique_student_identifier': user.username,
+            'inactiveUser': True,
+        }
+        return JsonResponse(response_payload)
+
+    rolename = request.POST.get('rolename')
+    action = request.POST.get('action')
+    if rolename not in ROLES:
+        error = strip_tags(f"unknown rolename '{rolename}'")
+        log.error(error)
+        return HttpResponseBadRequest(error)
+
+    # disallow instructors from removing their own instructor access.
+    if rolename == 'instructor' and user == request.user and action != 'allow':
+        response_payload = {
+            'unique_student_identifier': user.username,
+            'rolename': rolename,
+            'action': action,
+            'removingSelfAsInstructor': True,
+        }
+        return JsonResponse(response_payload)
+
+    if action == 'allow':
+        log.info(f'qwer111: user: {user}')
+        allow_access(course, user, rolename)
+    elif action == 'revoke':
+        revoke_access(course, user, rolename)
+    else:
+        return HttpResponseBadRequest(strip_tags(
+            f"unrecognized action u'{action}'"
+        ))
+
+    if rolename == 'staff' and isinstance(course_id, CCXLocator):
+        try:
+            # Retrieve the CCX course using the CCX ID part of the course key
+            ccx_id = course_id.ccx
+            ccx_course = CustomCourseForEdX.objects.get(id=ccx_id)
+            
+            # Get the second coach case only
+            if ccx_course.coach and ccx_course.coach is not user:
+                if action == 'allow':
+                    # make the coach user a coach on the master course
+                    coach_role_on_master_course = CourseCcxCoachRole(ccx_course.course_id)
+                    coach_role_on_master_course.add_users(user)
+                    # make user a second coach of the CCX course
+                    ccx_course.coach2 = user
+                    log.info(f'CampusIL: The CCX Class changes in roles. The {user.username} set as coach2.')
+                elif action == 'revoke':
+                    # remove user to be a second coach of the CCX course
+                    if ccx_course.coach2.id == user.id:
+                        ccx_course.coach2 = None
+                    log.info(f'CampusIL: The CCX Class changes in roles. The {user.username} removed as coach2.')
+                else:
+                    return HttpResponseBadRequest(strip_tags(
+                        f"unrecognized action u'{action}'"
+                    ))
+                ccx_course.save()
+                
+        except CustomCourseForEdX.DoesNotExist:
+            # Handle the case where the CCX course does not exist
+            ccx_course = None
+
+    response_payload = {
+        'unique_student_identifier': user.username,
+        'rolename': rolename,
+        'action': action,
+        'success': 'yes',
+    }
+    return JsonResponse(response_payload)

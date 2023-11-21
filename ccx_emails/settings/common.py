@@ -23,3 +23,4 @@ def plugin_settings(settings):
     settings.OVERRIDE_ENROLL_EMAIL = 'ccx_emails.overrides.enroll_email'
     settings.OVERRIDE_ASSIGN_STAFF_ROLE_TO_CCX = 'ccx_emails.overrides.assign_staff_role_to_ccx'
     settings.OVERRIDE_SEND_EMAIL_TO_STUDENT = 'ccx_emails.overrides.send_mail_to_student'
+    settings.OVERRIDE_MODIFY_ACCESS = 'ccx_emails.overrides.modify_access'
