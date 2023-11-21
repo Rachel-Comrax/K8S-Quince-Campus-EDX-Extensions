@@ -76,3 +76,4 @@ def all_courses_for_report(request):
    
     # Return the JSON response to the browser
     return JsonResponse(_response_data)
+
