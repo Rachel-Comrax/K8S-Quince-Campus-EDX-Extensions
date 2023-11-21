@@ -17,8 +17,10 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from . import views
+from .views import all_courses_for_report
 
 urlpatterns = [
-    url(
-        r'^course_recommendations/$', views.get_user_courses, name='user_reco')
+    url(r'^course_recommendations/$', views.get_user_courses, name='user_reco'),
+    url(r'^released_langs/', views.released_langs, name='released_langs'),
+    url(r'^courses_for_report/$', all_courses_for_report, name='reportable_courses')
 ]
