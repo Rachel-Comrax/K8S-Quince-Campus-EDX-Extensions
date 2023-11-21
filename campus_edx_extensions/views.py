@@ -1,21 +1,23 @@
+
+from django.http import JsonResponse, HttpResponseForbidden
 import json
-import logging
 
 from django.conf import settings
+from common.djangoapps.student.roles import GlobalStaff
+from openedx.core.djangoapps.lang_pref.api import released_languages
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-from lms.djangoapps.mobile_api.decorators import mobile_view
+#from lms.djangoapps.mobile_api.decorators import mobile_view
 from rest_framework.decorators import api_view
 
+# CampusIL extention projects: 
+from campus_edx_extensions.models import WpCourseRecommendations
+from digital_gov_reports.courses_report import get_digital_data_to_report
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from openedx.core.djangoapps.user_api.models import WpCourseRecommendations 
-
-
+import logging
 log = logging.getLogger(__name__)
 
 @api_view(["GET"])
-@mobile_view()
+#@mobile_view()
 def get_user_courses(request):
       
       # initialization parameters
@@ -45,3 +47,32 @@ def get_user_courses(request):
         _output["recomendations"] = [item["course_id"] for item in _sorted_recomendations]
     
     return (JsonResponse(_output))
+
+
+@api_view(["GET"])
+def released_langs(request):
+    language_list = []
+    for code, name in released_languages():
+        language_list.append({
+            'code': code,
+            'name': name,
+            'released': True,
+        })
+
+    return JsonResponse(language_list, safe=False)
+
+
+@api_view(["GET"])
+def all_courses_for_report(request):
+    if not GlobalStaff().has_user(request.user):
+        return HttpResponseForbidden("Must be {platform_name} staff to perform this action.".format(platform_name=settings.PLATFORM_NAME))
+        
+    # Create a JSON response using JsonResponse
+    _data = {"DIGITAL_TIME_DELTA": 10}
+    _report_data = get_digital_data_to_report(**_data)
+    _response_data = {
+        "course_details": _report_data # Assuming you want to wrap the data in a "data" key
+    }
+   
+    # Return the JSON response to the browser
+    return JsonResponse(_response_data)
