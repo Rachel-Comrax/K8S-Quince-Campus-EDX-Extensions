@@ -1,4 +1,4 @@
-from .models import CampusilReportableCoursesDigital
+from digital_gov_reports.models import CampusilReportableCoursesDigital
 import logging
 from openedx.core.lib.celery import APP
 from django.conf import settings

@@ -68,7 +68,9 @@ APP_NAMES = [
     "user_account = user_account.apps:UserAccountConfig",
     "periodic_task = periodic_task.apps:PeriodicTaskConfig",
     "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
-    "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha"
+    "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig",
+    "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha",
+    "digital_gov_reports = digital_gov_reports.apps:DigitalReports"
 ]
  
 
@@ -100,7 +102,9 @@ setup(
         'course_import',
         'workers_queue',
         'video_transcripts',
-        'google_recaptcha'
+        'incomplete_profile_message',
+        'google_recaptcha',
+        'digital_gov_reports'
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
