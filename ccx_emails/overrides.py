@@ -243,6 +243,7 @@ def send_mail_to_student(base_func, student, param_dict, language=None):
     }
 
     message_class = ace_emails_dict[message_type]
+    user = User.objects.filter(email=student).first()
     message = message_class().personalize(
         recipient=Recipient(lms_user_id=lms_user_id, email_address=student),
         language=language,

@@ -14,6 +14,8 @@ from campus_edx_extensions.models import WpCourseRecommendations
 from digital_gov_reports.courses_report import get_digital_data_to_report
 
 import logging
+from django.http import JsonResponse
+
 log = logging.getLogger(__name__)
 
 @api_view(["GET"])
@@ -61,7 +63,6 @@ def released_langs(request):
 
     return JsonResponse(language_list, safe=False)
 
-
 @api_view(["GET"])
 def all_courses_for_report(request):
     if not GlobalStaff().has_user(request.user):
@@ -76,5 +77,3 @@ def all_courses_for_report(request):
    
     # Return the JSON response to the browser
     return JsonResponse(_response_data)
-
-

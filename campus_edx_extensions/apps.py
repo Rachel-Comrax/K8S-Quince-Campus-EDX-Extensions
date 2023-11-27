@@ -30,12 +30,6 @@ class CampusEdxExtensionsConfig(AppConfig):
                 PluginURLs.REGEX: r'^campus_edx_extensions/',
                 PluginURLs.RELATIVE_PATH: 'urls',
             },
-            ProjectType.CMS: {
-                PluginURLs.NAMESPACE: EXTENSIONS_APP_NAME,
-                PluginURLs.APP_NAME: EXTENSIONS_APP_NAME,
-                PluginURLs.REGEX: r'^campus_edx_extensions/',
-                PluginURLs.RELATIVE_PATH: 'urls',
-            }
         },
 
         PluginSettings.CONFIG: {

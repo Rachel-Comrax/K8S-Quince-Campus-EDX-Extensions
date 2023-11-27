@@ -15,9 +15,10 @@ Including another URLconf
 """
 # pylint: disable=unused-import
 from django.conf.urls import url
-from django.contrib import admin
+
 from . import views
 from .views import all_courses_for_report
+
 
 urlpatterns = [
     url(r'^course_recommendations/$', views.get_user_courses, name='user_reco'),
