@@ -11,9 +11,9 @@ from lms.djangoapps.certificates.models import GeneratedCertificate
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.models import PersistentCourseGrade
 
-class CampusilReportableCoursesDigital(CourseOverview):
+class CampusilReportableCoursesDigital(models.Model):
     isReportable = models.BooleanField(default=False)
-    #course_overview = models.ForeignKey(CourseOverview)
+    course_overview = models.ForeignKey(CourseOverview, on_delete=models.CASCADE)
    
     def get_courses_to_report(days_config = 7):
         # one week is 7 (days). 
@@ -30,11 +30,14 @@ class CampusilReportableCoursesDigital(CourseOverview):
             'letter_grade'
         )  # Assume one grade per course per student
         reportableCourses_subquery = CampusilReportableCoursesDigital.objects.filter(
-            courseoverview_ptr_id=OuterRef('course_id'),
+            course_overview_id=OuterRef('course_id'),
+        ).annotate(
+            end = F('course_overview__end'),
+           display_name = F('course_overview__display_name')
         ).values(
             'isReportable',
             'end',
-            'display_name'
+            "display_name"
         )     
         certificate_subquery = GeneratedCertificate.objects.filter(
             user_id=OuterRef('student_id'),
