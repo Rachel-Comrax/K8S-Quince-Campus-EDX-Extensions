@@ -16,7 +16,7 @@ def get_digital_data_to_report(**data):
 #Create an empty list to store the element values 
     _output = []  
     _time_slot = data["DIGITAL_TIME_DELTA"]
-    log.info(f'qwer10: DIGITAL_TIME_DELTA={_time_slot}')
+    log.info(f'DIGITAL_TIME_DELTA={_time_slot}')
     
     for row in _queryset:
 #Adjust model properties to match product requirements
