@@ -106,7 +106,6 @@ def post(base_func, self, request):
                     for vertical in sequential.get_children():
                         override_field_for_ccx(ccx_course_object, vertical, hidden, True)
             
-            log.info(f'qwer444: from extensions')
             ccx_id = CCXLocator.from_course_locator(master_course_object.id, str(ccx_course_object.id))
 
             # Create forum roles
