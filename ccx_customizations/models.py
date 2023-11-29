@@ -7,16 +7,21 @@ class Origin(models.Model):
     '''
     Added new table for the CCX origin types.
     '''
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     
     class Meta:
         app_label = 'ccx_customizations'
+        verbose_name = 'CCX Origin'
+        verbose_name_plural = 'CCX Origins'
+    
+    def __str__(self):
+        return self.name
         
 class CustomCourseForEdXExtraData(models.Model):
     '''
     Added extension table for the CCX class extra data.
     '''
-    ccx_course = models.ForeignKey(
+    ccx_course = models.OneToOneField(
         CustomCourseForEdX,
         on_delete=models.CASCADE,               # Defines what happens when the referenced object is deleted.
         related_name='ccx_extra_data'           # The name to use for the reverse relation from CustomCourseForEdX back to CustomCourseForEdXExtraData.
@@ -37,3 +42,8 @@ class CustomCourseForEdXExtraData(models.Model):
     
     class Meta:
         app_label = 'ccx_customizations'
+        verbose_name = 'CCX Extra Data'
+        verbose_name_plural = 'CCX Extra Data'
+        
+    def __str__(self):
+        return self.ccx_course.display_name
