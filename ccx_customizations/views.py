@@ -120,7 +120,7 @@ def get_valid_input(request_data, ignore_missing=False):
     # organization
     validate_string(request_data, valid_input, field_errors, 'organization')
     # year
-    validate_int(request_data, valid_input, field_errors, 'year')
+    validate_string(request_data, valid_input, field_errors, 'year')
     
     return valid_input, field_errors
 

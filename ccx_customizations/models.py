@@ -38,7 +38,7 @@ class CustomCourseForEdXExtraData(models.Model):
     class_name = models.CharField(max_length=255)
     class_num = models.IntegerField()
     organization = models.CharField(max_length=255)
-    year = models.IntegerField()
+    year = models.CharField(max_length=50)
     
     class Meta:
         app_label = 'ccx_customizations'

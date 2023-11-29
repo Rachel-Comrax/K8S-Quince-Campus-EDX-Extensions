@@ -15,7 +15,7 @@ class CustomCourseForEdXExtraDataSerializer(serializers.ModelSerializer):
     class_name = serializers.CharField()
     class_num = serializers.IntegerField()
     organization = serializers.CharField()
-    year = serializers.IntegerField()
+    year = serializers.CharField()
 
     class Meta:
         model = CustomCourseForEdXExtraData
