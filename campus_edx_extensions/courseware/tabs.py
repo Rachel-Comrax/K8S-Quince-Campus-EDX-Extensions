@@ -15,7 +15,9 @@ class DatesTab(DatesTabBase):
     title = gettext_noop("Dates")
     priority = 30
     view_name = "dates"
-    is_hideable = True
+    @classmethod
+    def is_enabled(cls, course, user=None):
+        return False
 
     def __init__(self, tab_dict):
         def link_func(course, reverse_func):
