@@ -3,7 +3,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 from lms.djangoapps.course_home_api.toggles import course_home_legacy_is_active
 from openedx.features.course_experience.url_helpers import get_learning_mfe_home_url
-from lms.djangoapps.courseware.tabs import EnrolledTab
+from lms.djangoapps.courseware.tabs import DatesTab as DatesTabBase
 
 
 class DatesTab(EnrolledTab):
