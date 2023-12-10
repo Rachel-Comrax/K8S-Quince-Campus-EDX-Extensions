@@ -6,7 +6,7 @@ from openedx.features.course_experience.url_helpers import get_learning_mfe_home
 from lms.djangoapps.courseware.tabs import DatesTab as DatesTabBase
 
 
-class DatesTab(EnrolledTab):
+class DatesTab(DatesTabBase):
     """
     A tab representing the relevant dates for a course.
     """
