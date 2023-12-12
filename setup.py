@@ -71,6 +71,9 @@ APP_NAMES = [
     "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig",
     "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha"
 ]
+TABS_NAMES = [
+    "dates = campus_edx_extensions.courseware.tabs:DatesTab"
+]
  
 
 setup(
@@ -107,4 +110,4 @@ setup(
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     zip_safe=False,
-    entry_points={"lms.djangoapp": APP_NAMES, "cms.djangoapp": APP_NAMES})
+    entry_points={"lms.djangoapp": APP_NAMES, "cms.djangoapp": APP_NAMES, "openedx.course_tab": TABS_NAMES })
