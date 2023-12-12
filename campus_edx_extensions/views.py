@@ -69,7 +69,8 @@ def all_courses_for_report(request):
         return HttpResponseForbidden("Must be {platform_name} staff to perform this action.".format(platform_name=settings.PLATFORM_NAME))
         
     # Create a JSON response using JsonResponse
-    _data = {"DIGITAL_TIME_DELTA": 10}
+
+    _data = {"DIGITAL_HUB_TIME_DELTA": 10}
     _report_data = get_digital_data_to_report(**_data)
     _response_data = {
         "course_details": _report_data # Assuming you want to wrap the data in a "data" key
@@ -77,3 +78,4 @@ def all_courses_for_report(request):
    
     # Return the JSON response to the browser
     return JsonResponse(_response_data)
+
