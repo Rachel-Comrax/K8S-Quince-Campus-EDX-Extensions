@@ -14,8 +14,8 @@ def get_digital_data_to_report(**data):
     _prefix_certificate_url= f'{_domain}/certificates/'
     # create an empty list to store the element values 
     _output = []  
-    _time_slot = data["DIGITAL_TIME_DELTA"]
-    log.info(f'DIGITAL_TIME_DELTA={_time_slot}')
+    _time_slot = data["DIGITAL_HUB_TIME_DELTA"]
+    log.info(f'DIGITAL_HUB_TIME_DELTA={_time_slot}')
     
     for row in _queryset:
         # adjust model properties to match product requirements
