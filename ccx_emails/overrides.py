@@ -317,7 +317,6 @@ def modify_access(base_func, request, course_id):
         return JsonResponse(response_payload)
 
     if action == 'allow':
-        log.info(f'qwer111: user: {user}')
         allow_access(course, user, rolename)
     elif action == 'revoke':
         revoke_access(course, user, rolename)
