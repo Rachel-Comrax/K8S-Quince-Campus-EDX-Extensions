@@ -35,7 +35,7 @@ def get_digital_data_to_report(**data):
         student = {
             "id": row["_student_id"],
             "first_name": row["student_first_name"],
-            "last_name": str(row["student_last_name"]),
+            "last_name": row["student_last_name"],
             "email": row["student_email"],
             "total_grade": total_grade,
             "pass": latter_grade,
