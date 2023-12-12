@@ -21,7 +21,7 @@ SECRET_KEY = 'secret-key'
 
 INSTALLED_APPS = []
 
-ROOT_URLCONF = 'campus_edx_extensions.urls'
+ROOT_URLCONF = 'digital_gov_reports.urls'
 
 
 # Internationalization
