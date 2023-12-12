@@ -1,27 +1,23 @@
-
-from django.http import JsonResponse, HttpResponseForbidden
 import json
+import logging
 
 from django.conf import settings
+from django.http import JsonResponse, HttpResponseForbidden
 from common.djangoapps.student.roles import GlobalStaff
 from openedx.core.djangoapps.lang_pref.api import released_languages
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-#from lms.djangoapps.mobile_api.decorators import mobile_view
 from rest_framework.decorators import api_view
-
-# CampusIL extention projects: 
+ 
 from campus_edx_extensions.models import WpCourseRecommendations
 from digital_gov_reports.courses_report import get_digital_data_to_report
-
-import logging
-from django.http import JsonResponse
 
 log = logging.getLogger(__name__)
 
 @api_view(["GET"])
-#@mobile_view()
 def get_user_courses(request):
-      
+    if not GlobalStaff().has_user(request.user):
+        return HttpResponseForbidden("Must be {platform_name} staff to perform this action.".format(platform_name=settings.PLATFORM_NAME))
+        
       # initialization parameters
     _output = {"recomendations": None }
     _username = request.GET.get('user', request.user.username)
