@@ -62,8 +62,8 @@ def released_langs(request):
 def all_courses_for_report(request):
     if not GlobalStaff().has_user(request.user):
         return HttpResponseForbidden("Must be {platform_name} staff to perform this action.".format(platform_name=settings.PLATFORM_NAME))
-    
-    _data = {"DIGITAL_TIME_DELTA": 10}
+
+    _data = {"DIGITAL_HUB_TIME_DELTA": 10}
     _report_data = get_digital_data_to_report(**_data)
     _response_data = {
         "course_details": _report_data

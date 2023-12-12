@@ -7,6 +7,7 @@ from django.db.models import F, OuterRef, Subquery
 from django.conf import settings
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from organizations.models import Organization
 from lms.djangoapps.certificates.models import GeneratedCertificate
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.models import PersistentCourseGrade
@@ -15,9 +16,9 @@ class CampusilReportableCoursesDigital(models.Model):
     isReportable = models.BooleanField(default=False)
     course_overview = models.ForeignKey(CourseOverview, on_delete=models.CASCADE)
    
-    def get_courses_to_report(days_config = 7):
+    def get_courses_to_report(days_config=7):
         # one week is 7 (days). 
-        days_config = int(configuration_helpers.get_value('DIGITAL_TIME_DELTA', settings.DIGITAL_TIME_DELTA))
+        days_config = int(configuration_helpers.get_value('DIGITAL_HUB_TIME_DELTA', settings.DIGITAL_HUB_TIME_DELTA))
         now = timezone.now()
         time_delta = now - timedelta(days = days_config)
         
@@ -79,3 +80,28 @@ class CampusilReportableCoursesDigital(models.Model):
         ).distinct()
         
         return queryset
+    
+
+class CampusilOrganizationExtension(models.Model):
+    org_id = models.ForeignKey(Organization, on_delete=models.CASCADE, db_column='org_id')
+    email = models.CharField(max_length=255, unique=False, db_column='org_email')
+    
+    class Meta:
+        verbose_name = 'Organization Extension'
+        verbose_name_plural = 'Organizations Extension'
+    
+    def __str__(self):
+        return self.org_id
+    
+    
+    
+class CampusilOrganizationCourses(models.Model):
+    digital_hub_org_id = models.ForeignKey(CampusilOrganizationExtension, on_delete=models.CASCADE, db_column='dh_org_id')
+    course_id = models.ForeignKey(CourseOverview, on_delete=models.CASCADE, db_column='course_id')
+    
+    class Meta:
+        verbose_name = 'Organization Course'
+        verbose_name_plural = 'Organization Courses'
+    
+    def __str__(self):
+        return self.dh_org_id
