@@ -15,11 +15,16 @@ Including another URLconf
 """
 # pylint: disable=unused-import
 from django.conf.urls import url
+from django.urls import include, path, re_path
 
-from . import views
+from ccx_customizations import views
 
+
+CCX_URLS = ([
+    path('', views.CCXListViewCustomizations.as_view(), name='list'),
+], 'ccx')
+
+app_name = 'v0'
 urlpatterns = [
-    url(r'^course_recommendations/$', views.get_user_courses, name='user_reco'),
-    url(r'^released_langs/', views.released_langs, name='released_langs'),
-    url(r'^courses_for_report/$', views.all_courses_for_report, name='reportable_courses')
+    path('ccx', include(CCX_URLS)),
 ]

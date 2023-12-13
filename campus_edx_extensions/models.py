@@ -3,7 +3,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class WpCourseRecommendations(models.Model):
     """
     Two objects representing user object from user_auth table and recommendations array of specific user. 

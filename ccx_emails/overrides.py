@@ -43,6 +43,8 @@ from ccx_keys.locator import CCXLocator
 
 log = logging.getLogger(__name__)
 
+log = logging.getLogger(__name__)
+
 def change_access(base_func, course, user, level, action, send_email=True):
     """
     Change access of user.

@@ -69,7 +69,9 @@ APP_NAMES = [
     "periodic_task = periodic_task.apps:PeriodicTaskConfig",
     "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
     "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig",
-    "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha"
+    "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha",
+    "digital_gov_reports = digital_gov_reports.apps:DigitalReports",
+    "ccx_customizations = ccx_customizations.apps:CCXCustomizations"
 ]
 TABS_NAMES = [
     "dates = campus_edx_extensions.courseware.tabs:DatesTab"
@@ -106,6 +108,8 @@ setup(
         'video_transcripts',
         'incomplete_profile_message',
         'google_recaptcha',
+        'digital_gov_reports',
+        'ccx_customizations'
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),

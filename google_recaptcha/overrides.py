@@ -1,8 +1,10 @@
 import logging
+from django.conf import settings
 
 from common.djangoapps.util.json_request import JsonResponse
 from django.utils.translation import ugettext as _
 from openedx.core.djangoapps.user_authn.exceptions import AuthFailedError
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 from AddOns.Google_reCaptcha.Validate_reCaptcha import validate_recaptcha
 
@@ -22,17 +24,18 @@ def login_post(prev_fn, self, request, api_version):
         200 {'success': true}
 
     """
-    reCaptcha_token = request.POST.get('recaptcha-validation-token', False)
-    if request.data['email'] == '' and request.data['password'] == '' and not reCaptcha_token:
-        return prev_fn(self, request, api_version)
-    try:
-        reCaptcha_token = str(request.POST['recaptcha-validation-token'])
-        validate_recaptcha(reCaptcha_token)
-    except AuthFailedError as error:
-        response_content = error.get_response()
-        log.exception(response_content)
-        response = JsonResponse(response_content, status=400)
-        return response
+    if configuration_helpers.get_value('IS_RECAPTCHA_ENABLED', settings.IS_RECAPTCHA_ENABLED):
+        reCaptcha_token = request.POST.get('recaptcha-validation-token', False)
+        if request.data['email'] == '' and request.data['password'] == '' and not reCaptcha_token:
+            return prev_fn(self, request, api_version)
+        try:
+            reCaptcha_token = str(request.POST['recaptcha-validation-token'])
+            validate_recaptcha(reCaptcha_token)
+        except AuthFailedError as error:
+            response_content = error.get_response()
+            log.exception(response_content)
+            response = JsonResponse(response_content, status=400)
+            return response
     return prev_fn(self, request, api_version)
 
 
@@ -54,12 +57,13 @@ def register_post(prev_fn, self, request):
             address already exists
         HttpResponse: 403 operation not allowed
     """
-    try:
-        reCaptcha_token = str(request.POST['recaptcha-validation-token'])
-        validate_recaptcha(reCaptcha_token)
-    except AuthFailedError:
-        errors = {}
-        errors['recaptcha-validation-token'] = [{"user_message":_("The answer you've entered is incorrect. Please try again")}]
-        return self._create_response(request, errors, status_code=400)
+    if configuration_helpers.get_value('IS_RECAPTCHA_ENABLED', settings.IS_RECAPTCHA_ENABLED):
+        try:
+            reCaptcha_token = str(request.POST['recaptcha-validation-token'])
+            validate_recaptcha(reCaptcha_token)
+        except AuthFailedError:
+            errors = {}
+            errors['recaptcha-validation-token'] = [{"user_message":_("The answer you've entered is incorrect. Please try again")}]
+            return self._create_response(request, errors, status_code=400)
 
     return prev_fn(self, request)

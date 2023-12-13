@@ -2,23 +2,22 @@ import json
 import logging
 
 from django.conf import settings
+from django.http import JsonResponse, HttpResponseForbidden
+from common.djangoapps.student.roles import GlobalStaff
 from openedx.core.djangoapps.lang_pref.api import released_languages
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-from lms.djangoapps.mobile_api.decorators import mobile_view
 from rest_framework.decorators import api_view
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-from .models import WpCourseRecommendations 
-
+ 
+from campus_edx_extensions.models import WpCourseRecommendations
+from digital_gov_reports.courses_report import get_digital_data_to_report
 
 log = logging.getLogger(__name__)
 
 @api_view(["GET"])
-@mobile_view()
 def get_user_courses(request):
-      
+    if not GlobalStaff().has_user(request.user):
+        return HttpResponseForbidden("Must be {platform_name} staff to perform this action.".format(platform_name=settings.PLATFORM_NAME))
+        
       # initialization parameters
     _output = {"recomendations": None }
     _username = request.GET.get('user', request.user.username)
@@ -47,7 +46,6 @@ def get_user_courses(request):
     
     return (JsonResponse(_output))
 
-
 @api_view(["GET"])
 def released_langs(request):
     language_list = []
@@ -59,3 +57,16 @@ def released_langs(request):
         })
 
     return JsonResponse(language_list, safe=False)
+
+@api_view(["GET"])
+def all_courses_for_report(request):
+    if not GlobalStaff().has_user(request.user):
+        return HttpResponseForbidden("Must be {platform_name} staff to perform this action.".format(platform_name=settings.PLATFORM_NAME))
+
+    _data = {"DIGITAL_HUB_TIME_DELTA": 10}
+    _report_data = get_digital_data_to_report(**_data)
+    _response_data = {
+        "course_details": _report_data
+    }
+   
+    return JsonResponse(_response_data)
