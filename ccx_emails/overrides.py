@@ -9,6 +9,14 @@ from django.utils.html import strip_tags
 
 from edx_ace import ace
 from edx_ace.recipient import Recipient
+from common.djangoapps.course_modes.models import CourseMode
+from common.djangoapps.student.roles import CourseCcxCoachRole, CourseStaffRole
+from common.djangoapps.student.models import (
+    CourseEnrollment,
+    CourseEnrollmentAllowed,
+    is_email_retired
+)
+from common.djangoapps.util.json_request import JsonResponse
 from lms.djangoapps.courseware.courses import get_course_with_access
 from lms.djangoapps.instructor.views.tools import get_student_from_identifier
 from lms.djangoapps.instructor.access import allow_access, ROLES, revoke_access
@@ -29,19 +37,9 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
 from openedx.core.djangoapps.theming import helpers as theming_helpers
 from openedx.core.djangolib.markup import Text
 
-from common.djangoapps.course_modes.models import CourseMode
-from common.djangoapps.student.models import (
-    CourseEnrollment,
-    CourseEnrollmentAllowed,
-    is_email_retired
-)
-from common.djangoapps.student.roles import CourseCcxCoachRole, CourseStaffRole
-from common.djangoapps.util.json_request import JsonResponse
+from opaque_keys.edx.keys import CourseKey
 from ccx_emails.message_types import EnrollEnrolledCCXCoach, EnrollEnrolledCreateCCX
 from ccx_keys.locator import CCXLocator
-from opaque_keys.edx.keys import CourseKey
-
-
 
 log = logging.getLogger(__name__)
 
@@ -317,7 +315,6 @@ def modify_access(base_func, request, course_id):
         return JsonResponse(response_payload)
 
     if action == 'allow':
-        log.info(f'qwer111: user: {user}')
         allow_access(course, user, rolename)
     elif action == 'revoke':
         revoke_access(course, user, rolename)
@@ -333,7 +330,7 @@ def modify_access(base_func, request, course_id):
             ccx_course = CustomCourseForEdX.objects.get(id=ccx_id)
             
             # Get the second coach case only
-            if ccx_course.coach and ccx_course.coach is not user:
+            if ccx_course.coach and ccx_course.coach.id != user.id:
                 if action == 'allow':
                     # make the coach user a coach on the master course
                     coach_role_on_master_course = CourseCcxCoachRole(ccx_course.course_id)
@@ -363,3 +360,4 @@ def modify_access(base_func, request, course_id):
         'success': 'yes',
     }
     return JsonResponse(response_payload)
+    
