@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('course_date_signals', '0001_initial'),
         ('entitlements', '0015_add_unique_together_constraint'),
-        ('course_home_api', '0001_initial'),
+        #('course_home_api', '0001_initial'),
         ('course_duration_limits', '0008_auto_20190313_1634'),
         ('course_modes', '0013_auto_20200115_2022'),
         ('discussions', '0010_auto_20220203_2134'),
