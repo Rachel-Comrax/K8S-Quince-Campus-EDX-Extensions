@@ -60,7 +60,7 @@ with open("README.rst", "r") as fh:
     README = fh.read()
   
 VERSION = get_version('campus_edx_extensions', '__init__.py')
-APP_NAMES = [
+APP_NAMES_LMS = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
     "ccx_emails = ccx_emails.apps:CCXEmailsConfig",
     "course_import = course_import.apps:CourseImportConfig",
@@ -72,6 +72,11 @@ APP_NAMES = [
     "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha",
     "digital_gov_reports = digital_gov_reports.apps:DigitalReports",
     "ccx_customizations = ccx_customizations.apps:CCXCustomizations"
+]
+APP_NAMES_CMS = [
+    "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
+    "course_import = course_import.apps:CourseImportConfig",
+    "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
 ]
 TABS_NAMES = [
     "dates = campus_edx_extensions.courseware.tabs:DatesTab"
@@ -114,4 +119,4 @@ setup(
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     zip_safe=False,
-    entry_points={"lms.djangoapp": APP_NAMES, "cms.djangoapp": APP_NAMES, "openedx.course_tab": TABS_NAMES })
+    entry_points={"lms.djangoapp": APP_NAMES_LMS, "cms.djangoapp": APP_NAMES_CMS, "openedx.course_tab": TABS_NAMES })
