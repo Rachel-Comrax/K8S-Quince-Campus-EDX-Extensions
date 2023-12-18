@@ -75,15 +75,8 @@ APP_NAMES_LMS = [
 ]
 APP_NAMES_CMS = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
-    "ccx_emails = ccx_emails.apps:CCXEmailsConfig",
     "course_import = course_import.apps:CourseImportConfig",
-    "workers_queue = workers_queue.apps:WorkersQueueConfig",
-    "user_account = user_account.apps:UserAccountConfig",
-    "periodic_task = periodic_task.apps:PeriodicTaskConfig",
     "video_transcripts = video_transcripts.apps:VideoTranscriptsConfig",
-    "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig",
-    "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha", 
-    "digital_gov_reports = digital_gov_reports.apps:DigitalReports",
 ]
 TABS_NAMES = [
     "dates = campus_edx_extensions.courseware.tabs:DatesTab"
