@@ -1,4 +1,3 @@
-import html
 import logging
 
 from django.contrib.auth.models import User
@@ -43,7 +42,7 @@ from ccx_keys.locator import CCXLocator
 
 log = logging.getLogger(__name__)
 
-log = logging.getLogger(__name__)
+
 
 def change_access(base_func, course, user, level, action, send_email=True):
     """
@@ -198,11 +197,9 @@ def send_mail_to_student(base_func, student, param_dict, language=None):
 
     # Add some helpers and microconfig subsitutions
     if 'display_name' in param_dict:
-        param_dict['course_name'] = html.unescape(param_dict['display_name'])
+        param_dict['course_name'] = param_dict['display_name']
     elif 'course' in param_dict:
-        param_dict['course_name'] = html.unescape(Text(param_dict['course'].display_name_with_default))
-
-    param_dict['course_name'] = str(param_dict['course_name']).replace("'","`")
+        param_dict['course_name'] = Text(param_dict['course'].display_name_with_default)
 
     param_dict['site_name'] = configuration_helpers.get_value(
         'SITE_NAME',
@@ -243,7 +240,6 @@ def send_mail_to_student(base_func, student, param_dict, language=None):
     }
 
     message_class = ace_emails_dict[message_type]
-    user = User.objects.filter(email=student).first()
     message = message_class().personalize(
         recipient=Recipient(lms_user_id=lms_user_id, email_address=student),
         language=language,
