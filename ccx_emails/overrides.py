@@ -160,7 +160,7 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
     email_params['root_course_name'] =  Text(course.display_name_with_default)
     
     if email_params.get('root_course_name'):    
-        email_params['root_course_name'] = characters_to_replace(email_params['root_course_name'])    
+        email_params['root_course_name'] = characters_to_replace(Text(course.display_name_with_default))  
     
     ccx_auto_enroll_url = u'{proto}://{site}{page}{auth}{path}{action}'.format(
         proto=protocol,
