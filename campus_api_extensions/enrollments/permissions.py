@@ -35,4 +35,3 @@ class IsOrgDataResearcher(BasePermission):
                     return True
         
         return False
-    
