@@ -1,13 +1,13 @@
 
 from django.contrib import admin
-from .models import CourseOverview_Origin
+from .models import  CourseOverview_Origin
 
 
-class CourseOverview_Origin_Admin(admin.ModelAdmin): 
+class CourseOverview_OriginAdmin(admin.ModelAdmin): 
 
-    list_display = ('course_id_id','origin_id_id')
-
-
+    pass
 
 
-admin.site.register(CourseOverview_Origin, CourseOverview_Origin_Admin)
+
+
+admin.site.register(CourseOverview_Origin, CourseOverview_OriginAdmin)

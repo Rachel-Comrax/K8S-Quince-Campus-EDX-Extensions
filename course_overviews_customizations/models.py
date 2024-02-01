@@ -19,6 +19,6 @@ class CourseOverview_Origin(models.Model):
     )
 
     class Meta:
-        app_label = 'course_overviews_customization'
+        app_label = 'course_overviews_customizations'
         verbose_name = "Course Overviews Origin"
         verbose_name_plural = "Course Overviews Origins"
