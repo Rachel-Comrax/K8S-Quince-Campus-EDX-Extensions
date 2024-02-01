@@ -71,7 +71,9 @@ APP_NAMES_LMS = [
     "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig",
     "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha",
     "digital_gov_reports = digital_gov_reports.apps:DigitalReports",
-    "ccx_customizations = ccx_customizations.apps:CCXCustomizations"
+    "ccx_customizations = ccx_customizations.apps:CCXCustomizations",
+    "course_overviews_customizations = course_overviews_customizations.apps:CourseOverviewsCustomizations",
+    "org_customizations = org_customizations.apps:OrgCustomizations",
 ]
 APP_NAMES_CMS = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
@@ -81,7 +83,7 @@ APP_NAMES_CMS = [
 TABS_NAMES = [
     "dates = campus_edx_extensions.courseware.tabs:DatesTab"
 ]
- 
+
 
 setup(
     name='campus_edx_extensions',
@@ -114,9 +116,12 @@ setup(
         'incomplete_profile_message',
         'google_recaptcha',
         'digital_gov_reports',
-        'ccx_customizations'
+        'ccx_customizations',
+        'course_overviews_customizations',
+        'org_customizations',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     zip_safe=False,
     entry_points={"lms.djangoapp": APP_NAMES_LMS, "cms.djangoapp": APP_NAMES_CMS, "openedx.course_tab": TABS_NAMES })
+
