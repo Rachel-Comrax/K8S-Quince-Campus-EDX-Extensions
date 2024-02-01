@@ -57,7 +57,7 @@ class OrganizationExtraData(models.Model):
     )
     
     class Meta:
-        app_label = "organization_customization"
+        app_label = "org_customizations"
         verbose_name = "Custom Organization"
         verbose_name_plural = "Custom Organizations"
     
