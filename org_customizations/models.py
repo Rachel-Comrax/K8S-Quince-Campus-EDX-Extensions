@@ -31,13 +31,17 @@ class OrganizationVerticals(models.Model):
         Organization, 
         on_delete=models.PROTECT,  # ensurre we can't delete a organization if there are any vertical associated with it 
         null=False,
-        related_name ='org_id'
+        related_name ='org_vertical_id'
     )
     
     class Meta:
         app_label = "org_customizations"
         verbose_name = "Organization Vertical"
         verbose_name_plural = "Organizations Verticals"
+        
+    def __str__(self):
+        return f"{self.org.name} - {self.vertical.name}"
+    
            
 class OrganizationExtraData(models.Model):
     '''
@@ -47,7 +51,7 @@ class OrganizationExtraData(models.Model):
         Organization, 
         on_delete=models.CASCADE,
         null=False,
-        related_name ='org_id'
+        related_name ='org_extra_data_id'
     )
        
     heb_name = models.CharField(
