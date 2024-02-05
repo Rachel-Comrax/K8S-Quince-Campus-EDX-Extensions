@@ -15,7 +15,7 @@ class CourseOverviewsCustomizations(AppConfig):
     Campus EDX Extensions configuration.
     """
     name = EXTENSIONS_APP_NAME
-    verbose_name = 'Course Overviews Origin'
+    verbose_name = 'Course Overviews Customizations'
 
     # Class attribute that configures and enables this app as a Plugin App.
     plugin_app = {

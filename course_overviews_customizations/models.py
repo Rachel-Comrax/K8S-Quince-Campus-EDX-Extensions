@@ -22,3 +22,6 @@ class CourseOverview_Origin(models.Model):
         app_label = 'course_overviews_customizations'
         verbose_name = "Course Overviews Origin"
         verbose_name_plural = "Course Overviews Origins"
+        
+    def __str__(self):
+        return self.course.display_name
