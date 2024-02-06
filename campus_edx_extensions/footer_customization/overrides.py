@@ -92,7 +92,7 @@ def marketing_link(base_func, name):
         log.debug("Cannot find corresponding link for name: %s", name)
         return '#'
     
-def is_marketing_link_set(name):
+def is_marketing_link_set(base_func, name):
     """
     Returns a boolean if a given named marketing link is configured.
     """
@@ -101,12 +101,25 @@ def is_marketing_link_set(name):
         'ENABLE_MKTG_SITE',
         settings.FEATURES.get('ENABLE_MKTG_SITE', False)
     )
-    marketing_urls = configuration_helpers.get_value(
-        'MKTG_URLS',
-        settings.MKTG_URLS
+    enable_custom_mktg_site = configuration_helpers.get_value(
+        'ENABLE_MKTG_CUSTOM_SITE',
+        settings.FEATURES.get('ENABLE_MKTG_CUSTOM_SITE', False)
     )
 
+    # get the marketing site URLs dictionary
+    marketing_urls = {}
     if enable_mktg_site:
+        marketing_urls = configuration_helpers.get_value(
+            'MKTG_URLS',
+            settings.MKTG_URLS
+        )
+    elif enable_custom_mktg_site:
+        marketing_urls = configuration_helpers.get_value(
+            'MKTG_CUSTOM_URLS',
+            settings.MKTG_CUSTOM_URLS
+        )
+
+    if enable_mktg_site or enable_custom_mktg_site:
         return name in marketing_urls
     else:
         return name in settings.MKTG_URL_LINK_MAP
