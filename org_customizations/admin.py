@@ -15,8 +15,16 @@ class VerticalAdmin(admin.ModelAdmin):
     search_fields = ('name',)  
     
 class OrganizationExtraDataAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('org_name', 'org_short_name', 'heb_name')
 
+    def org_name(self, obj):
+        return obj.org.name
+    org_name.short_description = 'Organization Name'
+    
+    def org_short_name(self, obj):
+        return obj.org.short_name
+    org_name.short_description = 'Organization Short Name'
+    
 admin.site.register(Verticals, VerticalAdmin)
 admin.site.register(OrganizationVerticals, OrganizationVertical_Admin)
 admin.site.register(OrganizationExtraData, OrganizationExtraDataAdmin)
