@@ -128,6 +128,7 @@ def post(base_func, self, request):
                 course_key=ccx_course_key,
                 display_name=ccx_course_object.display_name
             )
+            email_params['message_type'] = 'enrolled_enroll_create_ccx'
             enroll_email(
                 course_id=ccx_course_key,
                 student_email=coach.email,
