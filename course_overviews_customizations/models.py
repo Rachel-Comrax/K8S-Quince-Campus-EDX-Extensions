@@ -4,24 +4,24 @@ from openedx.core.djangoapps.content.course_overviews.models import CourseOvervi
 from ccx_customizations.models import Origin
 
 
-class CourseOverview_Origin(models.Model):
+class CourseOverviewExtraData(models.Model):
     course = models.ForeignKey(
         CourseOverview,
-        on_delete=models.PROTECT, # ensurre we can't delete a course if there are any origin associated with it
+        on_delete=models.CASCADE,
         null = False,
         related_name = 'course_id'
     )
-    origin = models.ForeignKey(
+    origin = models.ManyToManyField(
         Origin, 
-        on_delete=models.PROTECT, # ensurre we can't delete a origin if there are any course associated with it
         null = False,
         related_name = 'origin_id'
     )
 
     class Meta:
         app_label = 'course_overviews_customizations'
-        verbose_name = "Course Overviews Origin"
-        verbose_name_plural = "Course Overviews Origins"
+        verbose_name = "Custom Course Overview"
+        verbose_name_plural = "Custom Course Overviews"
         
     def __str__(self):
-        return self.course.display_name
+        # returns all the related origins object associated with the current courseoverview instance 
+        return f"{self.course.display_name} course series:  {' , '.join( o.name for o in self.origin.all())}"
