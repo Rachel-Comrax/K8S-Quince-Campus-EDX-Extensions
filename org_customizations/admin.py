@@ -1,13 +1,5 @@
 from django.contrib import admin
-from .models import OrganizationExtraData, OrganizationVerticals, Verticals
-
-class OrganizationVertical_Admin(admin.ModelAdmin): 
-    list_display = ('display_name',)
-      
-    def display_name(self, obj):
-        return f"{obj.org.name} - {obj.vertical.name}"
-    
-    display_name.short_description = 'Organization - Vertical'
+from .models import OrganizationExtraData, Verticals
 
 # Vertical Admin
 class VerticalAdmin(admin.ModelAdmin):
@@ -15,7 +7,7 @@ class VerticalAdmin(admin.ModelAdmin):
     search_fields = ('name',)  
     
 class OrganizationExtraDataAdmin(admin.ModelAdmin):
-    list_display = ('org_name', 'org_short_name', 'heb_name')
+    list_display = ('org_name', 'org_short_name', 'heb_name', 'verticals')
 
     def org_name(self, obj):
         return obj.org.name
@@ -25,6 +17,10 @@ class OrganizationExtraDataAdmin(admin.ModelAdmin):
         return obj.org.short_name
     org_name.short_description = 'Organization Short Name'
     
+    def verticals(self, obj):
+    #returns all the related vertical object associated with the current organization instance
+        return ' , '.join( v.name for v in obj.vertical.all())
+    org_name.short_description = 'Verticals'
+    
 admin.site.register(Verticals, VerticalAdmin)
-admin.site.register(OrganizationVerticals, OrganizationVertical_Admin)
 admin.site.register(OrganizationExtraData, OrganizationExtraDataAdmin)

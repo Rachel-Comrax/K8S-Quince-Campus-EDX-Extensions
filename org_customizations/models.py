@@ -16,32 +16,7 @@ class Verticals(models.Model):
         verbose_name_plural = "Verticals"
 
     def __str__(self):
-        return self.name   
-    
-class OrganizationVerticals(models.Model):
-
-    vertical = models.ForeignKey(
-        Verticals,
-        on_delete = models.PROTECT, # ensurre we can't delete a vertical if there are any organization associated with it 
-        null = False,
-        related_name = 'vertical_id'
-    )
-    
-    org = models.ForeignKey(
-        Organization, 
-        on_delete=models.PROTECT,  # ensurre we can't delete a organization if there are any vertical associated with it 
-        null=False,
-        related_name ='org_vertical_id'
-    )
-    
-    class Meta:
-        app_label = "org_customizations"
-        verbose_name = "Organization Vertical"
-        verbose_name_plural = "Organizations Verticals"
-        
-    def __str__(self):
-        return f"{self.org.name} - {self.vertical.name}"
-    
+        return self.name         
            
 class OrganizationExtraData(models.Model):
     '''
@@ -53,6 +28,12 @@ class OrganizationExtraData(models.Model):
         null=False,
         related_name ='org_extra_data_id'
     )
+       
+    vertical = models.ManyToManyField(
+        Verticals,
+        null = False,
+        related_name = 'vertical_id'
+    )   
        
     heb_name = models.CharField(
         max_length = 255,
