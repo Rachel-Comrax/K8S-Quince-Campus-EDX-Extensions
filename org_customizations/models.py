@@ -1,7 +1,7 @@
 from django.db import models
 from organizations.models import Organization
 
-class Verticals(models.Model):
+class Vertical(models.Model):
     '''
     Create a new table to associate an organization with a vertical
     '''
@@ -30,7 +30,7 @@ class OrganizationExtraData(models.Model):
     )
        
     vertical = models.ManyToManyField(
-        Verticals,
+        Vertical,
         null = False,
         related_name = 'vertical_id'
     )   
