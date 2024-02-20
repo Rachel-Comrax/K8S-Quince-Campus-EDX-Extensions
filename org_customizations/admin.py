@@ -15,12 +15,13 @@ class OrganizationExtraDataAdmin(admin.ModelAdmin):
     
     def org_short_name(self, obj):
         return obj.org.short_name
-    org_name.short_description = 'Organization Short Name'
+    org_short_name.short_description = 'Organization Short Name'
     
     def vertical_name(self, obj):
     #returns all the related vertical object associated with the current organization instance
         return ' , '.join( v.name for v in obj.vertical.all())
-    org_name.short_description = 'Verticals'
+    vertical_name.short_description = 'Verticals'
     
+     
 admin.site.register(Vertical, VerticalAdmin)
 admin.site.register(OrganizationExtraData, OrganizationExtraDataAdmin)

@@ -47,4 +47,4 @@ class OrganizationExtraData(models.Model):
         verbose_name_plural = "Custom Organizations"
     
     def __str__(self):
-            return self.org.name
+        return f"{self.org.name} course verticals:  {' , '.join( v.name for v in self.vertical.all())}"
