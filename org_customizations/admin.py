@@ -5,23 +5,24 @@ from .models import OrganizationExtraData, Vertical
 class VerticalAdmin(admin.ModelAdmin):
     list_display = ('name',)  
     search_fields = ('name',)  
-    
+      
 class OrganizationExtraDataAdmin(admin.ModelAdmin):
-    list_display = ('org_name', 'org_short_name', 'heb_name', 'vertical_name')
+    list_display = ('org__name', 'org__short_name', 'heb_name', 'vertical__name',)
+    search_fields = ('org__name', 'org__short_name',)  
+    raw_id_fields = ('org',)
 
-    def org_name(self, obj):
+    def org__name(self, obj):
         return obj.org.name
-    org_name.short_description = 'Organization Name'
+    org__name.short_description = 'Organization Name'
     
-    def org_short_name(self, obj):
+    def org__short_name(self, obj):
         return obj.org.short_name
-    org_short_name.short_description = 'Organization Short Name'
+    org__short_name.short_description = 'Organization Short Name'
     
-    def vertical_name(self, obj):
+    def vertical__name(self, obj):
     #returns all the related vertical object associated with the current organization instance
         return ' , '.join( v.name for v in obj.vertical.all())
-    vertical_name.short_description = 'Verticals'
+    vertical__name.short_description = 'Verticals'
     
-     
 admin.site.register(Vertical, VerticalAdmin)
 admin.site.register(OrganizationExtraData, OrganizationExtraDataAdmin)
