@@ -1,13 +1,42 @@
 
 
+from django import forms
+import logging 
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
+from openedx.core.lib.courses import clean_course_id
 from django.contrib import admin
+
+
 from .models import  CourseOverviewExtraData
 
-class CourseOverviewExtraDataAdmin(admin.ModelAdmin): 
-    
+log = logging.getLogger(__name__)
+
+
+class CourseOverviewExtraDataForm(forms.ModelForm):
+    """
+    Premitive Custom Form Validation
+    TODO: add customization on the UI 
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+                
+        if self.data.get('course'):
+            try:
+                self.data['course'] = CourseKey.from_string(self.data['course'])
+            except InvalidKeyError:
+                raise forms.ValidationError("No valid CourseKey for id {}!".format(self.data['course']))
+            
+    class Meta:
+        fields = '__all__'
+        model = CourseOverviewExtraData
+
+@admin.register(CourseOverviewExtraData)
+class CourseOverviewExtraDataAdmin(admin.ModelAdmin):   
     list_display = ('course__id','course__display_name', 'origin__name',)
-    search_fields = ('course__display_name', 'origin__name')
-    raw_id_fields = ('course', )
+    search_fields = ('course__display_name', 'origin__name',)
+    raw_id_fields = ('course',)
+    form = CourseOverviewExtraDataForm
 
     def course__display_name(self, obj):
         return obj.course.display_name
@@ -21,5 +50,4 @@ class CourseOverviewExtraDataAdmin(admin.ModelAdmin):
     # returns all the related origins object associated with the current courseoverview instance 
         return ' , '.join( o.name for o in obj.origin.all())
     origin__name.short_description = "course series"
-
-admin.site.register(CourseOverviewExtraData, CourseOverviewExtraDataAdmin)
+    
