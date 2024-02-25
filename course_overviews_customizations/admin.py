@@ -1,15 +1,13 @@
 
 
 from django import forms
-import logging 
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from openedx.core.lib.courses import clean_course_id
 from django.contrib import admin
-
 
 from .models import  CourseOverviewExtraData
 
+import logging 
 log = logging.getLogger(__name__)
 
 
