@@ -72,7 +72,8 @@ APP_NAMES_LMS = [
     "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha",
     "digital_gov_reports = digital_gov_reports.apps:DigitalReports",
     "ccx_customizations = ccx_customizations.apps:CCXCustomizations",
-    "campus_api_extensions = campus_api_extensions.apps:CampusApiExtensions"
+    "campus_api_extensions = campus_api_extensions.apps:CampusApiExtensions",
+    "explicit_queues = explicit_queues.apps:ExplicitQueuesConfig",
 ]
 APP_NAMES_CMS = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
