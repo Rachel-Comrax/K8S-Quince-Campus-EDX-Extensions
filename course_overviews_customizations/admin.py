@@ -1,15 +1,14 @@
 
+import logging
 
 from django import forms
+from django.contrib import admin
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from django.contrib import admin
 
-from .models import  CourseOverviewExtraData
+from .models import CourseOverviewExtraData
 
-import logging 
 log = logging.getLogger(__name__)
-
 
 class CourseOverviewExtraDataForm(forms.ModelForm):
     """
@@ -28,6 +27,7 @@ class CourseOverviewExtraDataForm(forms.ModelForm):
     class Meta:
         fields = '__all__'
         model = CourseOverviewExtraData
+
 
 @admin.register(CourseOverviewExtraData)
 class CourseOverviewExtraDataAdmin(admin.ModelAdmin):   
@@ -48,4 +48,4 @@ class CourseOverviewExtraDataAdmin(admin.ModelAdmin):
     # returns all the related origins object associated with the current courseoverview instance 
         return ' , '.join( o.name for o in obj.origin.all())
     origin__name.short_description = "course series"
-    
+   
