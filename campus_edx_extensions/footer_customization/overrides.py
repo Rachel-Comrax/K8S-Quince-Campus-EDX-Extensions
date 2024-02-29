@@ -113,7 +113,7 @@ def is_marketing_link_set(base_func, name):
             'MKTG_URLS',
             settings.MKTG_URLS
         )
-    elif enable_custom_mktg_site:
+    if enable_custom_mktg_site:
         marketing_urls = configuration_helpers.get_value(
             'MKTG_CUSTOM_URLS',
             settings.MKTG_CUSTOM_URLS
