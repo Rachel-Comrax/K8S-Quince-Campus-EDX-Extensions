@@ -32,6 +32,7 @@ from lms.djangoapps.ccx.utils import ccx_course
 from lms.djangoapps.ccx.models import CustomCourseForEdX
 from lms.djangoapps.ccx.api.v0.views import make_user_coach
 from openedx.core.djangoapps.ace_common.template_context import get_base_template_context
+from openedx.core.djangoapps.ace_common.message import characters_to_replace
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.theming import helpers as theming_helpers
 from openedx.core.djangolib.markup import Text
@@ -154,8 +155,9 @@ def get_email_params(base_func, course, auto_enroll, secure=True, course_key=Non
         site=stripped_site_name,
         path=reverse('ccx_coach_dashboard', kwargs={'course_id': course_key})
     )
-    email_params['root_course_name'] = Text(course.display_name_with_default)
-
+          
+    email_params['root_course_name'] = characters_to_replace(Text(course.display_name_with_default))
+    
     ccx_auto_enroll_url = u'{proto}://{site}{page}{auth}{path}{action}'.format(
         proto=protocol,
         site=stripped_site_name,
