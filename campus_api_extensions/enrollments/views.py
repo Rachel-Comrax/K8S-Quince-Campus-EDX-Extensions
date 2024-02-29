@@ -1,34 +1,33 @@
 import logging
-from rest_framework import serializers
-
-from django.core.exceptions import ValidationError
-from django.db.models import OuterRef, Subquery
-
-from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
-from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser
-from rest_framework import permissions  # lint-amnesty, pylint: disable=wrong-import-order
-from rest_framework.generics import ListAPIView  # lint-amnesty, pylint: disable=wrong-import-order
-from rest_framework.decorators import api_view
-from social_django.models import UserSocialAuth
 
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.util.disable_rate_limit import can_disable_rate_limit
+from django.core.exceptions import ValidationError
+from django.db.models import OuterRef, Subquery
+from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
+from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser
 from openedx.core.djangoapps.enrollments.paginators import CourseEnrollmentsApiListPagination
 from openedx.core.djangoapps.enrollments.serializers import CourseEnrollmentsApiListSerializer
 from openedx.core.djangoapps.enrollments.views import EnrollmentUserThrottle
 from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser
 from openedx.core.lib.api.view_utils import DeveloperErrorViewMixin
+from rest_framework import permissions  # lint-amnesty, pylint: disable=wrong-import-order
+from rest_framework import serializers
+from rest_framework.generics import ListAPIView  # lint-amnesty, pylint: disable=wrong-import-order
+from social_django.models import UserSocialAuth
 
-from .permissions import IsOrgDataResearcher
 from .forms import CourseEnrollmentsOrgApiListForm
+from .permissions import IsOrgDataResearcher
 
 log = logging.getLogger(__name__)
+
 
 class CourseEnrollmentsOrgApiListSerializer(CourseEnrollmentsApiListSerializer):
     moe_idm = serializers.CharField()
     
     class Meta(CourseEnrollmentsApiListSerializer.Meta):
         fields = CourseEnrollmentsApiListSerializer.Meta.fields + ('moe_idm', )
+
 
 @can_disable_rate_limit
 class CourseEnrollmentsOrgApiListView(DeveloperErrorViewMixin, ListAPIView):
@@ -110,6 +109,7 @@ class CourseEnrollmentsOrgApiListView(DeveloperErrorViewMixin, ListAPIView):
     throttle_classes = (EnrollmentUserThrottle,)
     serializer_class = CourseEnrollmentsOrgApiListSerializer
     pagination_class = CourseEnrollmentsApiListPagination
+
 
     def get_queryset(self):
         """
