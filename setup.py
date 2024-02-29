@@ -74,6 +74,7 @@ APP_NAMES_LMS = [
     "ccx_customizations = ccx_customizations.apps:CCXCustomizations",
     "course_overviews_customizations = course_overviews_customizations.apps:CourseOverviewsCustomizations",
     "org_customizations = org_customizations.apps:OrgCustomizations",
+    "campus_api_extensions = campus_api_extensions.apps:CampusApiExtensions",
 ]
 APP_NAMES_CMS = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
@@ -119,6 +120,7 @@ setup(
         'ccx_customizations',
         'course_overviews_customizations',
         'org_customizations',
+        'campus_api_extensions',
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
