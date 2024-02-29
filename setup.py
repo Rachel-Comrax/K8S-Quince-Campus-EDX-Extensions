@@ -71,7 +71,8 @@ APP_NAMES_LMS = [
     "incomplete_profile_message = incomplete_profile_message.apps:IncompleteProfileMessageConfig",
     "google_recaptcha = google_recaptcha.apps:GoogleReCaptcha",
     "digital_gov_reports = digital_gov_reports.apps:DigitalReports",
-    "ccx_customizations = ccx_customizations.apps:CCXCustomizations"
+    "ccx_customizations = ccx_customizations.apps:CCXCustomizations",
+    "campus_api_extensions = campus_api_extensions.apps:CampusApiExtensions"
 ]
 APP_NAMES_CMS = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
@@ -114,7 +115,8 @@ setup(
         'incomplete_profile_message',
         'google_recaptcha',
         'digital_gov_reports',
-        'ccx_customizations'
+        'ccx_customizations',
+        'campus_api_extensions'
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
