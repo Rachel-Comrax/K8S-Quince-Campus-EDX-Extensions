@@ -41,3 +41,5 @@ def plugin_settings(settings):
     More info: https://github.com/edx/edx-platform/blob/master/openedx/core/djangoapps/plugins/README.rst
     """
     settings.OVERRIDE_API_CCX_ADD_CLASS_POST = 'campus_edx_extensions.campus_ac.overrides.post'
+    settings.OVERRIDE_MARKETING_LINK = 'campus_edx_extensions.footer_customization.overrides.marketing_link'
+    settings.OVERRIDE_IS_MARKETING_LINK_SET = 'campus_edx_extensions.footer_customization.overrides.is_marketing_link_set'
