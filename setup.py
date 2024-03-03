@@ -75,6 +75,7 @@ APP_NAMES_LMS = [
     "course_overviews_customizations = course_overviews_customizations.apps:CourseOverviewsCustomizations",
     "org_customizations = org_customizations.apps:OrgCustomizations",
     "campus_api_extensions = campus_api_extensions.apps:CampusApiExtensions",
+    "explicit_queues = explicit_queues.apps:ExplicitQueuesConfig",
 ]
 APP_NAMES_CMS = [
     "campus_edx_extensions = campus_edx_extensions.apps:CampusEdxExtensionsConfig",
