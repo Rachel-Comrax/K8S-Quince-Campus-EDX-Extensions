@@ -1,46 +1,40 @@
 """ Permission classes. """
 import logging
 
-from opaque_keys.edx.keys import CourseKey
-from rest_framework.permissions import BasePermission, IsAuthenticated
-
-from edx_rest_framework_extensions.auth.jwt.authentication import is_jwt_authenticated
+from django.core.exceptions import ObjectDoesNotExist
+from edx_rest_framework_extensions.auth.jwt.authentication import \
+    is_jwt_authenticated
 from edx_rest_framework_extensions.auth.jwt.decoder import (
-    decode_jwt_filters,
-    decode_jwt_is_restricted,
-    decode_jwt_scopes,
-)
-
+    decode_jwt_filters, decode_jwt_is_restricted, decode_jwt_scopes)
+from opaque_keys.edx.keys import CourseKey
+from openedx.core.djangoapps.content.course_overviews.models import \
+    CourseOverview
+from org_customizations.models import OrganizationExtraData
+from rest_framework import status
+from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.response import Response
 
 log = logging.getLogger(__name__)
 
 
-class IsSuperuser(BasePermission):
-    """ Allows access only to superusers. """
-
-    def has_permission(self, request, view):
-        return request.user and request.user.is_superuser
-
-
-class IsStaff(BasePermission):
+class IsOrgStaff(BasePermission):
     """
-    Allows access to "global" staff users..
+    Allows access to org staff members
     """
-    def has_permission(self, request, view):
-        return request.user.is_staff
-
-
-class IsUserInUrl(BasePermission):
-    """
-    Allows access if the requesting user matches the user in the URL.
-    """
-    def has_permission(self, request, view):
-        allowed = request.user.username.lower() == get_username_param(request)
-        if not allowed:
-            log.info("Permission IsUserInUrl: not satisfied for requesting user %s.", request.user.username)
-        return allowed
-
-
+    def has_permission(self, request, view):    
+        #check if the user is a global staff         
+        if request.user.is_staff:
+            return True
+        
+        # Check if the user is associated with the course organization      
+        course_key = CourseKey.from_string(view.kwargs.get('course_id'))                
+        try:
+            course =  CourseOverview.objects.get(id=course_key)
+            return OrganizationExtraData.objects.filter(org__name=course.org, api_user__username = request.user).exists()
+            
+        except ObjectDoesNotExist:
+            return Response({"Developer Massage": "Course is not found"}, status=status.HTTP_404_NOT_FOUND)
+            
 class JwtRestrictedApplication(BasePermission):
     """
     Allows access if the request was successfully authenticated with JwtAuthentication
@@ -147,20 +141,7 @@ class JwtHasUserFilterForRequestedUser(BasePermission):
                 return filter_value
         return None
 
-
-class LoginRedirectIfUnauthenticated(IsAuthenticated):
-    """
-    A DRF permission class that will login redirect unauthorized users.
-
-    It can be used to convert a plain Django view that was using @login_required
-    into a DRF APIView, which is useful to enable our DRF JwtAuthentication class.
-
-    Requires JwtRedirectToLoginIfUnauthenticatedMiddleware to work.
-
-    """
-
-
-_NOT_JWT_RESTRICTED_PERMISSIONS = NotJwtRestrictedApplication & (IsStaff | IsUserInUrl)
+_NOT_JWT_RESTRICTED_PERMISSIONS = (NotJwtRestrictedApplication & IsOrgStaff)
 _JWT_RESTRICTED_PERMISSIONS = (
     JwtRestrictedApplication &
     JwtHasScope &

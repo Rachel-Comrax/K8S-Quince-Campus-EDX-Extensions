@@ -4,26 +4,31 @@
 import logging
 from contextlib import contextmanager
 
-from edx_rest_framework_extensions import permissions
-from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
-from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser
+#from edx_rest_framework_extensions import permissions
+from edx_rest_framework_extensions.auth.jwt.authentication import \
+    JwtAuthentication
+from edx_rest_framework_extensions.auth.session.authentication import \
+    SessionAuthenticationAllowInactiveUser
+from lms.djangoapps.courseware.access import has_access
+from lms.djangoapps.grades.api import (CourseGradeFactory,
+                                       clear_prefetched_course_grades,
+                                       prefetch_course_grades)
+from lms.djangoapps.grades.rest_api.serializers import GradingPolicySerializer
+from lms.djangoapps.grades.rest_api.v1.utils import (
+    CourseEnrollmentPagination, GradeViewMixin)
 from opaque_keys import InvalidKeyError
+from openedx.core.lib.api.authentication import \
+    BearerAuthenticationAllowInactiveUser
+from openedx.core.lib.api.view_utils import (PaginatedAPIView, get_course_key,
+                                             verify_course_exists)
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
+from xmodule.modulestore.django import \
+    modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 
-from lms.djangoapps.courseware.access import has_access
-from lms.djangoapps.grades.api import CourseGradeFactory, clear_prefetched_course_grades, prefetch_course_grades
-from lms.djangoapps.grades.rest_api.serializers import GradingPolicySerializer
-from lms.djangoapps.grades.rest_api.v1.utils import CourseEnrollmentPagination, GradeViewMixin
-from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser
-from openedx.core.lib.api.view_utils import PaginatedAPIView, get_course_key, verify_course_exists
-from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
+from . import permissions
 
 log = logging.getLogger(__name__)
-
-class qwer(GradeViewMixin, PaginatedAPIView):
-    pass
 
 @contextmanager
 def bulk_course_grade_context(course_key, users):
@@ -44,16 +49,12 @@ class CourseGradesOrgView(GradeViewMixin, PaginatedAPIView):
        **Use Case**
     
             Get course grades of all users who are enrolled in a course.
-            The currently logged-in user may request all enrolled user's grades information
-            if they are allowed.
-        
+            The currently logged-in user requierd to be part of the api users list (Organization Customization)
+            
         **Example Request**
         
-            GET /campus_api_extensions/courses/{course_id}/                      - Get grades for all users in course
-            GET /campus_api_extensions/{course_id}/?username={username}          - Get grades for specific user in course
-            GET /campus_api_extensions/?course_id={course_id}                    - Get grades for all users in course
-            GET /campus_api_extensions?course_id={course_id}&username={username} - Get grades for specific user in course
-    
+            GET /campus_api_extensions/course_grades_org/{course_id}/                     - Get grades for all users in course
+            GET /campus_api_extensions/{course_id}/?username={username}                   - Get grades for specific user in course    
     
         **GET Parameters**
         
@@ -127,7 +128,7 @@ class CourseGradesOrgView(GradeViewMixin, PaginatedAPIView):
         username = request.GET.get('username')
 
         course_key = get_course_key(request, course_id)
-
+        
         if username:
             # If there is a username passed, get grade for a single user
             with self._get_user_or_raise(request, course_key) as grade_user:

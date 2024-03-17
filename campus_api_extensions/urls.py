@@ -14,10 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 # pylint: disable=unused-import
+
 from django.urls import re_path
 
-from .enrollments import views
+from .enrollments import views as enrollmentsView
+from .grades import views as gradesView
 
 urlpatterns = [
-    re_path(r'^course_enrollments_org/?$', views.CourseEnrollmentsOrgApiListView.as_view(), name='course_enrollments_org'),
+    re_path(r'^course_enrollments_org/?$', enrollmentsView.CourseEnrollmentsOrgApiListView.as_view(), name='course_enrollments_org'),
+    re_path(r'^course_grades_org/(?P<course_id>[^/+]+[/+][^/+]+[/+][^/]+)/$',gradesView.CourseGradesOrgView.as_view(),name='course_grades'),
 ]
+
