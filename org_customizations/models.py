@@ -1,5 +1,7 @@
 from django.db import models
 from organizations.models import Organization
+from django.contrib.auth.models import User
+
 
 class Vertical(models.Model):
     '''
@@ -39,7 +41,13 @@ class OrganizationExtraData(models.Model):
         max_length = 255,
         unique = True,
         verbose_name = 'heb_name',
-    )
+    )  
+     
+    api_user = models.ManyToManyField(
+        User, 
+        related_name = 'permission_user_id',
+        null = True      
+    ) 
     
     class Meta:
         app_label = "org_customizations"
@@ -47,4 +55,4 @@ class OrganizationExtraData(models.Model):
         verbose_name_plural = "Custom Organizations"
     
     def __str__(self):
-        return f"{self.org.name} course verticals:  {' , '.join( v.name for v in self.vertical.all())}"
+        return self.org.name
