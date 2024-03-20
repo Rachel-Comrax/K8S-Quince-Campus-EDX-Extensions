@@ -14,11 +14,8 @@ from digital_gov_reports.courses_report import get_digital_data_to_report
 log = logging.getLogger(__name__)
 
 @api_view(["GET"])
-def get_user_courses(request):
-    if not GlobalStaff().has_user(request.user):
-        return HttpResponseForbidden("Must be {platform_name} staff to perform this action.".format(platform_name=settings.PLATFORM_NAME))
-        
-      # initialization parameters
+def get_user_courses(request):  
+    # initialization parameters
     _output = {"recomendations": None }
     _username = request.GET.get('user', request.user.username)
     _recomendationsRows = WpCourseRecommendations.get_recomdations_by_username(_username)
