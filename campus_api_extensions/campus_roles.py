@@ -1,13 +1,13 @@
 """
 API library for Django REST Framework permissions-oriented workflows
 """
-from rest_framework.permissions import BasePermission
 from common.djangoapps.student.roles import GlobalStaff
-from openedx.core.lib.api.view_utils import validate_course_key
-from org_customizations.models import OrganizationExtraData
 from openedx.core.djangoapps.content.course_overviews.models import \
     CourseOverview
-   
+from openedx.core.lib.api.view_utils import validate_course_key
+from org_customizations.models import OrganizationExtraData
+from rest_framework.permissions import BasePermission
+
 
 class IsOrgStaff(BasePermission):
     """
