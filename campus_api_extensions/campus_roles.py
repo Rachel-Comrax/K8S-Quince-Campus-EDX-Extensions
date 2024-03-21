@@ -25,11 +25,13 @@ class IsOrgStaff(BasePermission):
         course_key_string = view.kwargs.get('course_id')
         course_key = validate_course_key(course_key_string)
         course_obj = CourseOverview.objects.get(id=course_key)
-        org = course_obj.org
+        org_short_name = course_obj.org
                     
         #Check if the user is a member of the course organization
-        if OrganizationExtraData.objects.filter(org__name=org, api_user__username = request.user).exists():
-           return True 
+        return OrganizationExtraData.objects.filter(
+            org__short_name=org_short_name, 
+            api_user__username=request.user).exists()
+           
        
 
  
