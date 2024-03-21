@@ -7,32 +7,12 @@ from edx_rest_framework_extensions.auth.jwt.authentication import \
 from edx_rest_framework_extensions.auth.jwt.decoder import (
     decode_jwt_filters, decode_jwt_is_restricted, decode_jwt_scopes)
 from opaque_keys.edx.keys import CourseKey
-from openedx.core.djangoapps.content.course_overviews.models import \
-    CourseOverview
-from org_customizations.models import OrganizationExtraData
-from rest_framework import status
 from rest_framework.permissions import BasePermission, IsAuthenticated
-from rest_framework.response import Response
+
+from ..campus_roles import IsOrgStaff
 
 log = logging.getLogger(__name__)
 
-
-class IsOrgStaff(BasePermission):
-    """
-    Allows access to org staff members
-    """
-    def has_permission(self, request, view):    
-        if request.user.is_staff:
-            return True
-        
-        # Check if the user is associated with the course organization      
-        course_key = CourseKey.from_string(view.kwargs.get('course_id'))                
-        try:
-            course =  CourseOverview.objects.get(id=course_key)
-            return OrganizationExtraData.objects.filter(org__name=course.org, api_user__username = request.user).exists()
-            
-        except ObjectDoesNotExist:
-            return Response({"Developer Massage": "Course is not found"}, status=status.HTTP_404_NOT_FOUND)
             
 class JwtRestrictedApplication(BasePermission):
     """
