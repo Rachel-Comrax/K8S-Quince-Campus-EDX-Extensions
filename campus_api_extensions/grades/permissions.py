@@ -22,7 +22,6 @@ class IsOrgStaff(BasePermission):
     Allows access to org staff members
     """
     def has_permission(self, request, view):    
-        #check if the user is a global staff         
         if request.user.is_staff:
             return True
         

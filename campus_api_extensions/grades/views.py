@@ -128,7 +128,7 @@ class CourseGradesOrgView(GradeViewMixin, PaginatedAPIView):
         username = request.GET.get('username')
 
         course_key = get_course_key(request, course_id)
-        
+      
         if username:
             # If there is a username passed, get grade for a single user
             with self._get_user_or_raise(request, course_key) as grade_user:
