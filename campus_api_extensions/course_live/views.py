@@ -13,13 +13,12 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 from common.djangoapps.util.views import ensure_valid_course_key
-from openedx.core.djangoapps.course_live.permissions import IsStaffOrInstructor
 from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser
 
 from openedx.core.lib.api.view_utils import verify_course_exists
 from openedx.core.djangoapps.course_live.models import AVAILABLE_PROVIDERS, CourseLiveConfiguration
 from openedx.core.djangoapps.course_live.serializers import CourseLiveConfigurationSerializer
-from ..permissions import IsOrgStaff
+from ..campus_roles import IsOrgStaff
 
 class CourseLiveConfigurationView(APIView):
     

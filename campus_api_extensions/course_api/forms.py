@@ -9,11 +9,10 @@ from django.core.exceptions import ValidationError
 from django.forms import CharField, Form
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+from openedx.core.djangoapps.util.forms import (ExtendedNullBooleanField,
+                                                MultiValueField)
 
-from openedx.core.djangoapps.util.forms import (
-    ExtendedNullBooleanField,
-    MultiValueField
-)
+
 
 
 class UsernameValidatorMixin:
@@ -84,5 +83,5 @@ class CourseIdListGetForm(UsernameValidatorMixin, Form):
     """
     A form to validate query parameters in the course list retrieval endpoint
     """
-    username = CharField(required=False)
+    username = CharField(required=True)
     role = CharField(required=True)

@@ -1,35 +1,38 @@
 """
-Course API
+CampusIL Course API
 """
 import logging
 from collections import defaultdict
 
 import search
+from common.djangoapps.student.models import CourseAccessRole, CourseEnrollment
+from common.djangoapps.student.roles import GlobalStaff
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser, User  # lint-amnesty, pylint: disable=imported-auth-user
+from django.contrib.auth.models import \
+    User  # lint-amnesty, pylint: disable=imported-auth-user
 from django.urls import reverse
 from edx_django_utils.monitoring import function_trace
 from edx_when.api import get_dates_for_course
-from opaque_keys.edx.django.models import CourseKeyField
-from rest_framework.exceptions import PermissionDenied
-
-from common.djangoapps.student.models import CourseAccessRole, CourseEnrollment
-from common.djangoapps.student.roles import GlobalStaff
 from lms.djangoapps.courseware.access import has_access
-from lms.djangoapps.courseware.courses import (
-    get_course_overview_with_access,
-    get_courses,
-    get_permission_for_course_about
-)
-from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from openedx.core.djangoapps.content.learning_sequences.api import get_course_outline
-from openedx.core.djangoapps.content.learning_sequences.data import CourseOutlineData
+from lms.djangoapps.courseware.courses import (get_course_overview_with_access,
+                                               get_courses,
+                                               get_permission_for_course_about)
+from opaque_keys.edx.django.models import CourseKeyField
+from openedx.core.djangoapps.content.course_overviews.models import \
+    CourseOverview
+from openedx.core.djangoapps.content.learning_sequences.api import \
+    get_course_outline
+from openedx.core.djangoapps.content.learning_sequences.data import \
+    CourseOutlineData
 from openedx.core.lib.api.view_utils import LazySequence
-from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
-from xmodule.modulestore.exceptions import ItemNotFoundError  # lint-amnesty, pylint: disable=wrong-import-order
+from xmodule.modulestore.django import \
+    modulestore  # lint-amnesty, pylint: disable=wrong-import-order
+from xmodule.modulestore.exceptions import \
+    ItemNotFoundError  # lint-amnesty, pylint: disable=wrong-import-order
 
+from ..campus_roles import get_staff_orgs
 from .exceptions import OverEnrollmentLimitException
-from .permissions import can_view_courses_for_username
+from .permission import can_view_courses_for_username
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -43,12 +46,10 @@ def get_effective_user(requesting_user, target_username):
     """
     if target_username == requesting_user.username:
         return requesting_user
-    elif target_username == '':
-        return AnonymousUser()
+    
     elif can_view_courses_for_username(requesting_user, target_username):
         return User.objects.get(username=target_username)
-    else:
-        raise PermissionDenied()
+
 
 
 def course_detail(request, username, course_key):
@@ -159,7 +160,8 @@ def list_course_keys(request, username, role):
 
     The courses returned include those for which the user identified by
     `username` has the given role.  Additionally, the logged in user
-    should have permission to view courses available to that user.
+    should be an organization staff member to view courses available to that
+    user.
 
     Note: This function does not use branding to determine courses.
 
@@ -181,13 +183,13 @@ def list_course_keys(request, username, role):
 
     """
     user = get_effective_user(request.user, username)
-
+    
     all_course_keys = CourseOverview.get_all_course_keys()
-
-    # Global staff have access to all courses. Filter courses for non-global staff.
-    if GlobalStaff().has_user(user):
+    
+    # Logged in user who is a global staff is allowed to view all courses.
+    if GlobalStaff().has_user(request.user):
         return all_course_keys
-
+    
     if role == 'staff':
         # This short-circuit implementation bypasses has_access() which we think is too slow for some users when
         # evaluating staff-level course access for Insights.  Various tickets have context on this issue: CR-2487,
@@ -210,11 +212,13 @@ def list_course_keys(request, username, role):
             .distinct()
         )
     else:
-        # This is the original implementation which still covers the case where role = "instructor":
+        orgs_short_name = get_staff_orgs(request.user)
+        sub_course_keys = [f'-v1:{org_short_name}+' for org_short_name in orgs_short_name]
+
         filtered_course_keys = LazySequence(
             (
                 course_key for course_key in all_course_keys
-                if has_access(user, role, course_key)
+                if has_access(user, role, course_key) and any(sub_course_key in str(course_key) for sub_course_key in sub_course_keys)
             ),
             est_len=len(all_course_keys)
         )

@@ -1,22 +1,27 @@
 """
-Course API Views
+CampusIL Course API Views
 """
 
 import logging
+
 from django.core.exceptions import ValidationError
 from django.core.paginator import InvalidPage
 from edx_django_utils.monitoring import function_trace
-from edx_rest_framework_extensions.paginators import NamespacedPageNumberPagination
+from edx_rest_framework_extensions.paginators import \
+    NamespacedPageNumberPagination
+from lms.djangoapps.course_api import (USE_RATE_LIMIT_2_FOR_COURSE_LIST_API,
+                                       USE_RATE_LIMIT_10_FOR_COURSE_LIST_API)
+from lms.djangoapps.course_api.serializers import (CourseDetailSerializer,
+                                                   CourseKeySerializer,
+                                                   CourseSerializer)
+from openedx.core.lib.api.view_utils import (DeveloperErrorViewMixin,
+                                             view_auth_classes)
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.throttling import UserRateThrottle
 
-from openedx.core.lib.api.view_utils import DeveloperErrorViewMixin, view_auth_classes
-
-from . import USE_RATE_LIMIT_2_FOR_COURSE_LIST_API, USE_RATE_LIMIT_10_FOR_COURSE_LIST_API
 from .api import course_detail, list_course_keys, list_courses
 from .forms import CourseDetailGetForm, CourseIdListGetForm, CourseListGetForm
-from .serializers import CourseDetailSerializer, CourseKeySerializer, CourseSerializer
 
 log = logging.getLogger("__name__")
 
@@ -367,7 +372,7 @@ class CourseIdListView(DeveloperErrorViewMixin, ListAPIView):
 
     **Example Requests**
 
-        GET /api/courses/v1/courses_ids/
+        GET /campus_api_extensions/courses_ids/
 
     **Response Values**
 
@@ -375,7 +380,7 @@ class CourseIdListView(DeveloperErrorViewMixin, ListAPIView):
 
     **Parameters**
 
-        username (optional):
+        username (required):
             The username of the specified user whose visible courses we
             want to see.
 
@@ -424,7 +429,7 @@ class CourseIdListView(DeveloperErrorViewMixin, ListAPIView):
         Returns CourseKeys for courses which the user has the provided role.
         """
         form = CourseIdListGetForm(self.request.query_params, initial={'requesting_user': self.request.user})
-
+ 
         if not form.is_valid():
             raise ValidationError(form.errors)
 
