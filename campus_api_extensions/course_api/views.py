@@ -11,6 +11,7 @@ from edx_rest_framework_extensions.paginators import \
     NamespacedPageNumberPagination
 from lms.djangoapps.course_api import (USE_RATE_LIMIT_2_FOR_COURSE_LIST_API,
                                        USE_RATE_LIMIT_10_FOR_COURSE_LIST_API)
+from lms.djangoapps.course_api.api import course_detail, list_courses
 from lms.djangoapps.course_api.serializers import (CourseDetailSerializer,
                                                    CourseKeySerializer,
                                                    CourseSerializer)
@@ -20,7 +21,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.throttling import UserRateThrottle
 
-from .api import course_detail, list_course_keys, list_courses
+from .api import list_course_keys
 from .forms import CourseDetailGetForm, CourseIdListGetForm, CourseListGetForm
 
 log = logging.getLogger("__name__")
