@@ -40,8 +40,5 @@ def is_org_staff(username, org_short_name=None):
             api_user__username=username).exists()
 
 def get_staff_orgs(username):
-    orgs_qs =  OrganizationExtraData.objects.select_related('org').filter(api_user__username=username)
-    staff_orgs = []
-    for o in orgs_qs:
-         staff_orgs.append(o.org.short_name) 
-    return staff_orgs  
+    return  OrganizationExtraData.objects.select_related('org').filter(
+	        api_user__username=username).values_list('org__short_name', flat=True).distinct()

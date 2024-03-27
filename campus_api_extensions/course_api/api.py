@@ -1,12 +1,11 @@
 """
 CampusIL Course API
 """
-
 from common.djangoapps.student.models import CourseAccessRole
 from common.djangoapps.student.roles import GlobalStaff
+from django.contrib.auth.models import \
+    User  # lint-amnesty, pylint: disable=imported-auth-user
 from edx_django_utils.monitoring import function_trace
-from lms.djangoapps.course_api.api import \
-    get_effective_user as get_effective_user_base
 from lms.djangoapps.courseware.access import has_access
 from opaque_keys.edx.django.models import CourseKeyField
 from openedx.core.djangoapps.content.course_overviews.models import \
@@ -14,6 +13,18 @@ from openedx.core.djangoapps.content.course_overviews.models import \
 from openedx.core.lib.api.view_utils import LazySequence
 
 from ..campus_roles import get_staff_orgs
+from .permission import can_view_courses_for_username
+
+
+def get_effective_user(requesting_user, target_username):
+    """
+    Get the user we want to view information on behalf of.
+    """
+    if target_username == requesting_user.username:
+        return requesting_user
+    
+    elif can_view_courses_for_username(requesting_user, target_username):
+        return User.objects.get(username=target_username)
 
 
 @function_trace('list_course_keys')
@@ -45,8 +56,7 @@ def list_course_keys(request, username, role):
         Yield `CourseKey` objects representing the collection of courses.
 
     """
-    user = get_effective_user_base(request.user, username)
-    
+    user = get_effective_user(request.user, username)
     all_course_keys = CourseOverview.get_all_course_keys()
     
     # Logged in user who is a global staff is allowed to view all courses.
@@ -76,12 +86,10 @@ def list_course_keys(request, username, role):
         )
     else:
         orgs_short_name = get_staff_orgs(request.user)
-        sub_course_keys = [f'-v1:{org_short_name}+' for org_short_name in orgs_short_name]
-
         filtered_course_keys = LazySequence(
             (
                 course_key for course_key in all_course_keys
-                if has_access(user, role, course_key) and any(sub_course_key in str(course_key) for sub_course_key in sub_course_keys)
+                if has_access(user, role, course_key) and course_key.org in orgs_short_name
             ),
             est_len=len(all_course_keys)
         )
