@@ -1,5 +1,4 @@
 """ CampusIL Permission Flags """
-
 from edx_rest_framework_extensions import permissions
 from rest_framework.permissions import IsAuthenticated
 

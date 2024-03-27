@@ -1,47 +1,20 @@
-""" API v0 views. """
-
-
-import logging
-from contextlib import contextmanager
-
-#from edx_rest_framework_extensions import permissions
+""" CampusIL API v0 views. """
 from edx_rest_framework_extensions.auth.jwt.authentication import \
     JwtAuthentication
 from edx_rest_framework_extensions.auth.session.authentication import \
     SessionAuthenticationAllowInactiveUser
-from lms.djangoapps.courseware.access import has_access
-from lms.djangoapps.grades.api import (CourseGradeFactory,
-                                       clear_prefetched_course_grades,
-                                       prefetch_course_grades)
-from lms.djangoapps.grades.rest_api.serializers import GradingPolicySerializer
+from lms.djangoapps.grades.api import CourseGradeFactory
 from lms.djangoapps.grades.rest_api.v1.utils import (
     CourseEnrollmentPagination, GradeViewMixin)
-from opaque_keys import InvalidKeyError
+from lms.djangoapps.grades.rest_api.v1.views import bulk_course_grade_context
 from openedx.core.lib.api.authentication import \
     BearerAuthenticationAllowInactiveUser
 from openedx.core.lib.api.view_utils import (PaginatedAPIView, get_course_key,
                                              verify_course_exists)
-from rest_framework import status
-from rest_framework.generics import ListAPIView
 from xmodule.modulestore.django import \
     modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 
 from . import permissions
-
-log = logging.getLogger(__name__)
-
-@contextmanager
-def bulk_course_grade_context(course_key, users):
-    """
-    Prefetches grades for the given users in the given course
-    within a context, storing in a RequestCache and deleting
-    on context exit.
-    """
-    prefetch_course_grades(course_key, users)
-    try:
-        yield
-    finally:
-        clear_prefetched_course_grades(course_key)
 
 
 class CourseGradesOrgView(GradeViewMixin, PaginatedAPIView):
@@ -155,65 +128,3 @@ class CourseGradesOrgView(GradeViewMixin, PaginatedAPIView):
                     user_grades.append(self._serialize_user_grade(user, course_key, course_grade))
 
         return self.get_paginated_response(user_grades)
-
-
-class CourseGradingOrgPolicy(GradeViewMixin, ListAPIView):
-    """
-    **Use Case**
-
-        Get the course grading policy.
-
-    **Example requests**:
-
-        GET /api/grades/v1/policy/courses/{course_id}/
-
-    **Response Values**
-
-        * assignment_type: The type of the assignment, as configured by course
-          staff. For example, course staff might make the assignment types Homework,
-          Quiz, and Exam.
-
-        * count: The number of assignments of the type.
-
-        * dropped: Number of assignments of the type that are dropped.
-
-        * weight: The weight, or effect, of the assignment type on the learner's
-          final grade.
-    """
-    allow_empty = False
-
-    authentication_classes = (
-        JwtAuthentication,
-        BearerAuthenticationAllowInactiveUser,
-        SessionAuthenticationAllowInactiveUser,
-    )
-
-    def _get_course(self, request, course_id):
-        """
-        Returns the course after parsing the id, checking access, and checking existence.
-        """
-        try:
-            course_key = get_course_key(request, course_id)
-        except InvalidKeyError:
-            raise self.api_error(  # lint-amnesty, pylint: disable=raise-missing-from
-                status_code=status.HTTP_400_BAD_REQUEST,
-                developer_message='The provided course key cannot be parsed.',
-                error_code='invalid_course_key'
-            )
-
-        if not has_access(request.user, 'staff', course_key):
-            raise self.api_error(
-                status_code=status.HTTP_403_FORBIDDEN,
-                developer_message='The course does not exist.',
-                error_code='user_or_course_does_not_exist',
-            )
-
-        course = modulestore().get_course(course_key, depth=0)
-        if not course:
-            raise self.api_error(
-                status_code=status.HTTP_404_NOT_FOUND,
-                developer_message='The course does not exist.',
-                error_code='user_or_course_does_not_exist',
-            )
-        return course
-
