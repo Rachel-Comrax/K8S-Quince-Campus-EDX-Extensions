@@ -1,12 +1,12 @@
 """ CampusIL Permission Flags """
-from edx_rest_framework_extensions import permissions
 from rest_framework.permissions import IsAuthenticated
+
+from edx_rest_framework_extensions.permissions import _NOT_JWT_RESTRICTED_PERMISSIONS, _JWT_RESTRICTED_PERMISSIONS
 
 from ..campus_roles import IsOrgStaff
 
-_NOT_JWT_RESTRICTED_PERMISSIONS = permissions.NotJwtRestrictedApplication & (IsOrgStaff | permissions.IsUserInUrl)
+
 JWT_RESTRICTED_APPLICATION_OR_USER_ACCESS = (
     IsAuthenticated &
-    IsOrgStaff &
-    (_NOT_JWT_RESTRICTED_PERMISSIONS | permissions._JWT_RESTRICTED_PERMISSIONS)
+    (_NOT_JWT_RESTRICTED_PERMISSIONS | _JWT_RESTRICTED_PERMISSIONS | IsOrgStaff)
 )

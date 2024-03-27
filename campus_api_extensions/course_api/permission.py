@@ -1,7 +1,6 @@
 """
 CampusIL Course API Authorization functions
 """
-
 from common.djangoapps.student.roles import GlobalStaff
 
 from ..campus_roles import is_org_staff
@@ -25,7 +24,6 @@ def can_view_courses_for_username(requesting_user, target_username):
     Raises:
         TypeError if target_username is empty or None.
     """
-
     # AnonymousUser is not allowed. 
     # logged-in user must insert a username
     if requesting_user.username == target_username:

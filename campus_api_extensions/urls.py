@@ -14,7 +14,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 # pylint: disable=unused-import
-
 from django.conf import settings
 from django.urls import re_path
 
@@ -22,6 +21,7 @@ from .course_api import views as courseApiView
 from .course_live import views as courseLiveView
 from .enrollments import views as enrollmentsView
 from .grades import views as gradesView
+
 
 urlpatterns = [
     re_path(r'^course_enrollments_org/?$', enrollmentsView.CourseEnrollmentsOrgApiListView.as_view(), name='course_enrollments_org'),

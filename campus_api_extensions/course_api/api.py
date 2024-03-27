@@ -1,15 +1,14 @@
 """
 CampusIL Course API
 """
+from django.contrib.auth.models import User  # lint-amnesty, pylint: disable=imported-auth-user
+from edx_django_utils.monitoring import function_trace
+from opaque_keys.edx.django.models import CourseKeyField
+
 from common.djangoapps.student.models import CourseAccessRole
 from common.djangoapps.student.roles import GlobalStaff
-from django.contrib.auth.models import \
-    User  # lint-amnesty, pylint: disable=imported-auth-user
-from edx_django_utils.monitoring import function_trace
 from lms.djangoapps.courseware.access import has_access
-from opaque_keys.edx.django.models import CourseKeyField
-from openedx.core.djangoapps.content.course_overviews.models import \
-    CourseOverview
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.core.lib.api.view_utils import LazySequence
 
 from ..campus_roles import get_staff_orgs
@@ -24,7 +23,7 @@ def get_effective_user(requesting_user, target_username):
         return requesting_user
     
     elif can_view_courses_for_username(requesting_user, target_username):
-        return User.objects.get(username=target_username)
+        return User.objects.filter(username=target_username).first()
 
 
 @function_trace('list_course_keys')

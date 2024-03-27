@@ -2,6 +2,7 @@
 Course API forms
 """
 from django.forms import CharField, Form
+
 from lms.djangoapps.course_api.forms import UsernameValidatorMixin
 
 
