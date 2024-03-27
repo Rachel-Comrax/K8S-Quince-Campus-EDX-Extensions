@@ -20,10 +20,8 @@ class IsOrgDataResearcher(BasePermission):
         
         # check provided courses for the Data Researcher role
         username = request.query_params.get('username')
-        if username:
-            username_enrollments = CourseEnrollment.objects.filter(user__username=username)
-            
-            for enrollment in username_enrollments:
+        if username:         
+            for enrollment in CourseEnrollment.objects.filter(user__username=username):
                 if CourseDataResearcherRole(enrollment.course_id).has_user(request.user):
                     return True
                 
