@@ -15,6 +15,7 @@ from rest_framework import permissions  # lint-amnesty, pylint: disable=wrong-im
 from rest_framework import serializers
 from rest_framework.generics import ListAPIView  # lint-amnesty, pylint: disable=wrong-import-order
 from social_django.models import UserSocialAuth
+from common.djangoapps.student.roles import CourseDataResearcherRole
 
 from .forms import CourseEnrollmentsOrgApiListForm
 from .permissions import IsOrgDataResearcher
@@ -38,15 +39,17 @@ class CourseEnrollmentsOrgApiListView(DeveloperErrorViewMixin, ListAPIView):
 
         **Example Requests**
 
-            GET /api/enrollment/v1/enrollments
+            GET /campus_api_extensions/course_enrollments_org
 
-            GET /api/enrollment/v1/enrollments?course_id={course_id}
+            GET /campus_api_extensions/course_enrollments_org?course_id={course_id}
 
-            GET /api/enrollment/v1/enrollments?username={username},{username},{username}
+            GET /campus_api_extensions/course_enrollments_org?username={username},{username},{username}
 
-            GET /api/enrollment/v1/enrollments?course_id={course_id}&username={username}
+            GET /campus_api_extensions/course_enrollments_org?course_id={course_id}&username={username}
 
-            GET /api/enrollment/v1/enrollments?org={org_short_name}
+            GET /campus_api_extensions/course_enrollments_org?org_short_name={org_short_name}
+            
+            
             
         **Query Parameters for GET**
 
@@ -127,7 +130,15 @@ class CourseEnrollmentsOrgApiListView(DeveloperErrorViewMixin, ListAPIView):
         if course_id:
             queryset = queryset.filter(course_id=course_id)
         if usernames:
-            queryset = queryset.filter(user__username__in=usernames)
+            usernames_courses_ids = []
+            username_enrollments = CourseEnrollment.objects.filter(user__username__in=usernames)
+            
+            # get all users courses that the application user has access to
+            for enrollment in username_enrollments:
+                if CourseDataResearcherRole(enrollment.course_id).has_user(self.request.user) and enrollment.course_id not in usernames_courses_ids:
+                    usernames_courses_ids.append(enrollment.course_id)
+            
+            queryset = queryset.filter(user__username__in=usernames, course_id__in=usernames_courses_ids)
         if org_short_name:
             queryset = queryset.filter(course__org=org_short_name)
 
