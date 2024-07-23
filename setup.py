@@ -7,7 +7,7 @@ from __future__ import print_function
 import os
 import re
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def load_requirements(*requirements_paths):
@@ -109,20 +109,21 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.8',
     ],
-    packages=[
-        'campus_edx_extensions',
-        'ccx_emails',
-        'course_import',
-        'workers_queue',
-        'video_transcripts',
-        'incomplete_profile_message',
-        'google_recaptcha',
-        'digital_gov_reports',
-        'ccx_customizations',
-        'course_overviews_customizations',
-        'org_customizations',
-        'campus_api_extensions',
-    ],
+    packages=find_packages(
+        include=[
+            'campus_edx_extensions*',
+            'ccx_emails*',
+            'course_import*',
+            'workers_queue*',
+            'video_transcripts*',
+            'incomplete_profile_message*',
+            'google_recaptcha*',
+            'digital_gov_reports*',
+            'ccx_customizations*',
+            'course_overviews_customizations*',
+            'org_customizations*',
+            'campus_api_extensions*',
+        ]),
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     zip_safe=False,
