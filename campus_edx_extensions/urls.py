@@ -14,12 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 # pylint: disable=unused-import
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 urlpatterns = [
-    url(r'^course_recommendations/$', views.get_user_courses, name='user_reco'),
-    url(r'^released_langs/', views.released_langs, name='released_langs'),
-    url(r'^courses_for_report/$', views.all_courses_for_report, name='reportable_courses')
+    re_path(r'^course_recommendations/$', views.get_user_courses, name='user_reco'),
+    re_path(r'^released_langs/', views.released_langs, name='released_langs'),
+    re_path(r'^courses_for_report/$', views.all_courses_for_report, name='reportable_courses')
 ]
