@@ -1,10 +1,10 @@
 """
-Test Django settings for campus_edx_extensions project.
+Test Django settings for ccx_customizatiions project.
 """
 
 import os
 
-ROOT_URLCONF = 'campus_edx_extensions.urls'
+ROOT_URLCONF = 'ccx_customizatiions.urls'
 BASE_DIR = os.path.dirname(__file__)
 
 ENV_ROOT = os.path.dirname(BASE_DIR)
@@ -39,8 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'campus_edx_extensions',
-    'ccx_customizations',  
-    'lms.djangoapps.ccx', 
+    'ccx_customizations',  # Add this line
+    'lms.djangoapps.ccx',  # Add this line as well
 )
 
 # Static files (CSS, JavaScript, Images)
