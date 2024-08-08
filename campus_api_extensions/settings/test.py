@@ -39,6 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'campus_edx_extensions',
+    'ccx_customizations',  # Add this line
+    'lms.djangoapps.ccx',  # Add this line as well
 )
 
 # Static files (CSS, JavaScript, Images)
