@@ -4,7 +4,7 @@ Test Django settings for ccx_customizatiions project.
 
 import os
 
-ROOT_URLCONF = 'ccx_customizatiions.urls'
+ROOT_URLCONF = 'ccx_customizations.urls'
 BASE_DIR = os.path.dirname(__file__)
 
 ENV_ROOT = os.path.dirname(BASE_DIR)
