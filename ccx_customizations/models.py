@@ -17,6 +17,10 @@ class Origin(models.Model):
     def __str__(self):
         return self.name
         
+class CustomCourseForEdX(models.Model):
+    # This is a temporary stub. Define fields if necessary, or keep it empty.
+    pass
+        
 class CustomCourseForEdXExtraData(models.Model):
     '''
     Added extension table for the CCX class extra data.
